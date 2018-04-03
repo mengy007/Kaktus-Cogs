@@ -11,6 +11,7 @@ class Stattracker:
 		
     @commands.command(pass_context=True, no_pm=True, name="bf1stats")
     async def bf1stats(self, ctx, platformog, user):
+        """Retrieves stats for BF1"""
         await self.bot.send_typing(ctx.message.channel)
         try:
             p = {
