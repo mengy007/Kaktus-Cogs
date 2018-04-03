@@ -32,7 +32,8 @@ class Stattracker:
                 await self.bot.say("Please specify a valid platform. (PSN, XBOX or PC)")
         except Exception as e:
             #await self.bot.say("error: " + e.message + " -- " + e.args)
-			
+            err = e.message
+
     def __unload(self):
         self.session.close()
 
