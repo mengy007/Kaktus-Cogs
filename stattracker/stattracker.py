@@ -10,21 +10,24 @@ class Stattracker:
         self.session = aiohttp.ClientSession()
 		
     @commands.command(pass_context=True, no_pm=True, name="bf1stats")
-    async def bf1stats(self, ctx, platform, user):
+    async def bf1stats(self, ctx, platform, playername):
         """Retrieves stats for BF1"""
         await self.bot.send_typing(ctx.message.channel)
         try:
             p = {
                 'PSN': 2,
                 'PS4': 2,
+                'PLAYSTATION': 2,
                 'XBOX': 1,
+                'XB': 1,
+                'XB1': 1,
                 'X1': 1,
                 'PC': 3,
             }
             pform = p.get(platform.upper(), 0)
             if pform:
-                url = 'http://bots.tracker.network/bf1/bf1.php?platform=' + str(pform) + '&username=' + user
-                await fetch_image(self, ctx, ctx.message.author, url, user, platform)
+                url = 'http://bots.tracker.network/bf1/bf1.php?platform=' + str(pform) + '&username=' + playername
+                await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
             else:
                 await self.bot.say("Please specify a valid platform. (PSN, XBOX or PC)")
         except Exception as e:
