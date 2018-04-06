@@ -4,7 +4,7 @@
     "SHORT" : "Fetches stats for Battlefield 1",
     "DESCRIPTION" : "Fetches an image with short statistics about a Battlefield 1 player",
     "INSTALL_MSG" : "Thanks for installing stattracker.",
-    "REQUIREMENTS" : [""],
+    "REQUIREMENTS" : [],
     "TAGS" : ["stattracker", "bf1", "battlefield"],
     "DISABLED" : false
 }
