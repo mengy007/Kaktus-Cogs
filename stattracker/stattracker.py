@@ -1,18 +1,98 @@
 import discord
 from discord.ext import commands
+import pathlib
+from cogs.utils.dataIO import dataIO
 import aiohttp
 import io
+from .utils import checks
+
+path = 'data/kaktuscog/stattracker'
 
 class Stattracker:
+
+    __author__ = "DasKaktus (DasKaktus#5299)"
+    __version__ = "1.1"
 
     def __init__(self, bot):
         self.bot = bot
         self.session = aiohttp.ClientSession()
+        try:
+            self.settings = dataIO.load_json(path + '/settings.json')
+        except Exception:
+            self.settings = {}
+
+    def save_json(self):
+        dataIO.save_json(path + '/settings.json', self.settings)
+
+    def init_server(self, server: discord.Server, reset=False):
+        if server.id not in self.settings or reset:
+            self.settings[server.id] = {
+                'whitelist': []
+            }
+
+    @commands.group(name='statsset', pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_messages=True)
+    async def _group(self, ctx):
+        """
+        settings for stattracker
+        """
+
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_help(ctx)
+	
+    @_group.command(name='whitelist', pass_context=True, no_pm=True)
+    async def whitelist(self, ctx, channel: discord.Channel):
+        """
+        add a channel where stats are allowed (if you want)
+        """
+
+        server = ctx.message.server
+        self.init_server(server)
+
+        if channel.id in self.settings[server.id]['whitelist']:
+            return await self.bot.say('Channel already whitelisted')
+        self.settings[server.id]['whitelist'].append(channel.id)
+        self.save_json()
+        await self.bot.say('Channel whitelisted.')
+
+    @_group.command(name='unwhitelist', pass_context=True, no_pm=True)
+    async def unwhitelist(self, ctx, channel: discord.Channel):
+        """
+        unwhitelist a channel
+        """
+
+        server = ctx.message.server
+        self.init_server(server)
+
+        if channel.id not in self.settings[server.id]['whitelist']:
+            return await self.bot.say('Channel wasn\'t whitelisted')
+        self.settings[server.id]['whitelist'].remove(channel.id)
+        self.save_json()
+        await self.bot.say('Channel unwhitelisted.')
+
+    @_group.command(name='reset', pass_context=True, no_pm=True)
+    async def rset(self, ctx):
+        """
+        resets to defaults
+        """
+
+        server = ctx.message.server
+        self.init_server(server, True)
+        await self.bot.say('Settings reset')
 		
     @commands.command(pass_context=True, no_pm=True, name="bf1stats")
     async def bf1stats(self, ctx, platform, playername):
         """Retrieves stats for BF1"""
-        await self.bot.send_typing(ctx.message.channel)
+
+        server = ctx.message.server
+        channel = ctx.message.channel
+		
+        if server.id not in self.settings:
+            return
+        if channel.id not in self.settings[server.id]['whitelist']:
+            return
+			
+        await self.bot.send_typing(channel)
         try:
             p = {
                 'PSN': 2,
@@ -45,4 +125,5 @@ async def fetch_image(self, ctx, duser, urlen, user, platform):
             return await self.bot.say(duser.mention + " Sorry, could not find the player '"+user+"'")
 
 def setup(bot):
+    pathlib.Path(path).mkdir(exist_ok=True, parents=True)
     bot.add_cog(Stattracker(bot))
