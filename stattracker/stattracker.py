@@ -81,7 +81,7 @@ class Stattracker:
         await self.bot.say('Settings reset')
 		
     @commands.command(pass_context=True, no_pm=True, name="bf1stats")
-    async def bf1stats(self, ctx, platform, playername):
+    async def bf1stats(self, ctx, platform, *, playername):
         """Retrieves stats for BF1"""
 
         server = ctx.message.server
