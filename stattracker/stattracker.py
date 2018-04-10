@@ -11,7 +11,7 @@ path = 'data/kaktuscog/stattracker'
 class Stattracker:
 
     __author__ = "DasKaktus (DasKaktus#5299)"
-    __version__ = "1.1"
+    __version__ = "1.2"
 
     def __init__(self, bot):
         self.bot = bot
@@ -109,7 +109,7 @@ class Stattracker:
                 url = 'http://bots.tracker.network/bf1/bf1.php?platform=' + str(pform) + '&username=' + playername
                 await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
             else:
-                await self.bot.say("Please specify a valid platform. (PSN, XBOX or PC)")
+                await self.bot.say(ctx.message.author.mention + ", please specify a valid platform. (PSN, XBOX or PC)")
         except Exception as e:
             #await self.bot.say("error: " + e.message + " -- " + e.args)
             err = e.message
@@ -122,7 +122,7 @@ async def fetch_image(self, ctx, duser, urlen, user, platform):
         if response.headers['Content-Type'] == "image/png":
             return await self.bot.send_file(ctx.message.channel, io.BytesIO(await response.read()), filename=user + '.png')
         else:
-            return await self.bot.say(duser.mention + " Sorry, could not find the player '"+user+"'")
+            return await self.bot.say("Sorry " + duser.mention + ", could not find the player '" + user + "'")
 
 def setup(bot):
     pathlib.Path(path).mkdir(exist_ok=True, parents=True)
