@@ -103,11 +103,15 @@ class Stattracker:
                 'XB1': 1,
                 'X1': 1,
                 'PC': 3,
+                'MAC': 4,
             }
             pform = p.get(platform.upper(), 0)
             if pform:
-                url = 'http://bots.tracker.network/bf1/bf1.php?platform=' + str(pform) + '&username=' + playername
-                await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
+                if pform == 4:
+                    await self.bot.say(ctx.message.author.mention + ", Ha ha ha ha ha... Mac.. You Sir are hilarious")
+                else:
+                    url = 'http://bots.tracker.network/bf1/bf1.php?platform=' + str(pform) + '&username=' + playername
+                    await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
             else:
                 await self.bot.say(ctx.message.author.mention + ", please specify a valid platform. (PSN, XBOX or PC)")
         except Exception as e:
