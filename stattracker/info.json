@@ -1,10 +1,10 @@
 {
     "NAME" : "StatTracker",
     "AUTHOR" : "Kaktus",
-    "SHORT" : "Fetches stats for Battlefield 1",
-    "DESCRIPTION" : "Fetches an image with short statistics about a Battlefield 1 player",
+    "SHORT" : "Fetches stats for Battlefield 1 and Battlefield V",
+    "DESCRIPTION" : "Fetches an image with short statistics about a Battlefield 1 or Battlefield V player",
     "INSTALL_MSG" : "Thanks for installing stattracker.",
     "REQUIREMENTS" : [],
-    "TAGS" : ["stattracker", "bf1", "battlefield"],
+    "TAGS" : ["stattracker", "bf1", "battlefield", "bfv"],
     "DISABLED" : false
 }

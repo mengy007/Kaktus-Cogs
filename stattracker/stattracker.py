@@ -11,7 +11,7 @@ path = 'data/kaktuscog/stattracker'
 class Stattracker:
 
     __author__ = "DasKaktus (DasKaktus#5299)"
-    __version__ = "1.2"
+    __version__ = "2.0"
 
     def __init__(self, bot):
         self.bot = bot
@@ -79,6 +79,44 @@ class Stattracker:
         server = ctx.message.server
         self.init_server(server, True)
         await self.bot.say('Settings reset')
+	
+    @commands.command(pass_context=True, no_pm=True, name="bfvstats")
+    async def bfvstats(self, ctx, platform, *, playername):
+        """Retrieves stats for BF1"""
+
+        server = ctx.message.server
+        channel = ctx.message.channel
+		
+        if server.id not in self.settings:
+            return
+        if channel.id not in self.settings[server.id]['whitelist']:
+            return
+			
+        await self.bot.send_typing(channel)
+        try:
+            p = {
+                'PSN': 2,
+                'PS4': 2,
+                'PLAYSTATION': 2,
+                'XBOX': 1,
+                'XB': 1,
+                'XB1': 1,
+                'X1': 1,
+                'PC': 3,
+                'MAC': 4,
+            }
+            pform = p.get(platform.upper(), 0)
+            if pform:
+                if pform == 4:
+                    await self.bot.say(ctx.message.author.mention + ", Ha ha ha ha ha... Mac.. You Sir are hilarious")
+                else:
+                    url = 'https://www.baver.se/bfv/index.php?pf=' + str(pform) + '&user=' + playername.replace(" ", "%20")
+                    await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
+            else:
+                await self.bot.say(ctx.message.author.mention + ", please specify a valid platform. (PSN, XBOX or PC)")
+        except Exception as e:
+            #await self.bot.say("error: " + e.message + " -- " + e.args)
+            err = e.message
 		
     @commands.command(pass_context=True, no_pm=True, name="bf1stats")
     async def bf1stats(self, ctx, platform, *, playername):
