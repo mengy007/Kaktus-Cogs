@@ -82,7 +82,7 @@ class Stattracker:
 	
     @commands.command(pass_context=True, no_pm=True, name="bfvstats")
     async def bfvstats(self, ctx, platform, *, playername):
-        """Retrieves stats for BF1"""
+        """Retrieves stats for BFV"""
 
         server = ctx.message.server
         channel = ctx.message.channel
