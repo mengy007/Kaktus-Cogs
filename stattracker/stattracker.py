@@ -8,6 +8,8 @@ from .utils import checks
 
 path = 'data/kaktuscog/stattracker'
 
+#bot = commands.Bot(command_prefix=commands.when_mentioned, description="Battlefield Stats Tracker")
+
 class Stattracker:
 
     __author__ = "DasKaktus (DasKaktus#5299)"
@@ -38,7 +40,9 @@ class Stattracker:
         """
 
         if ctx.invoked_subcommand is None:
-            await self.bot.send_help(ctx)
+            #await self.bot.send_help(ctx)
+            #await ctx.send_help()
+            await self.send_cmd_help(ctx)
 	
     @_group.command(name='whitelist', pass_context=True, no_pm=True)
     async def whitelist(self, ctx, channel: discord.Channel):
@@ -158,6 +162,17 @@ class Stattracker:
 
     def __unload(self):
         self.session.close()
+		
+    async def send_cmd_help(self, ctx):
+        if ctx.invoked_subcommand:
+            pages = self.bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+            for page in pages:
+                await self.bot.send_message(ctx.message.channel, page)
+        else:
+            pages = self.bot.formatter.format_help_for(ctx, ctx.command)
+            for page in pages:
+                await self.bot.send_message(ctx.message.channel, page)
+
 
 async def fetch_image(self, ctx, duser, urlen, user, platform):
     async with aiohttp.get(urlen) as response:
