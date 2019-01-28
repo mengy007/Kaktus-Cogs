@@ -45,7 +45,7 @@ class CustomCommandsImproved:
             await self.bot.say("That command is already a normal command.")
             return
 
-        if command not in self.cust_commands:
+        if command not in self.cust_commands[server.id]:
             self.cust_commands[server.id][command]["response"] = text
             self.cust_commands[server.id][command]["isdm"] = isdm
             self.save()
