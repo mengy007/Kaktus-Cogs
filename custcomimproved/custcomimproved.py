@@ -112,12 +112,6 @@ class CustomCommandsImproved:
             await self.bot.say("There are no custom commands defined. "
                                "Use setcom [command] [isdm=1 or 0] [text]")
 
-    @commands.group(pass_context=True, invoke_without_command=True)
-    @checks.is_owner()
-    async def acom(self, ctx, command=None):
-        if ctx.invoked_subcommand is None:
-            await ctx.invoke(self.lscom)
-
     async def on_message(self, message):
         msg = message.content
         server = message.server
