@@ -84,10 +84,11 @@ class CustomCommandsImproved:
         server = ctx.message.server
         if self.cust_commands[server.id]:
             sections = []
-            for command, isdm, text in sorted(self.cust_commands[server.id].items()):
+            #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
+            for command in sorted(self.cust_commands[server.id].items()):
                 item = 'Name:    ' + command
-                item += '\nText:    ' + text
-                item += '\nSend DM: ' + isdm
+                item += '\nText:    ' + self.cust_commands[server.id][command]["response"]
+                item += '\nSend DM: ' + self.cust_commands[server.id][command]["isdm"]
                 sections.append(item)
 
             for cmds in pagify('\n\n'.join(sections)):
