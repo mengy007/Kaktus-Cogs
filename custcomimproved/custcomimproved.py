@@ -92,7 +92,8 @@ class CustomCommandsImproved:
                 sections.append(item)
 
             for cmds in pagify('\n\n'.join(sections)):
-                await self.bot.say(box(cmds))
+                #await self.bot.say(box(cmds))
+                await self.bot.say(cmds)
         else:
             await self.bot.say("There are no custom commands defined. "
                                "Use setcom [command] [isdm=1 or 0] [text]")
@@ -118,7 +119,7 @@ class CustomCommandsImproved:
             if message.author.id == self.bot.user.id:
                 await self.bot.edit_message(message, ret)
             else:
-                if self.cust_commands[server.id][cmd]["isdm"]:
+                if self.cust_commands[server.id][cmd]["isdm"] == "1":
                     await self.bot.send_message(message.author, ret)
                 else:
                     await self.bot.send_message(message.channel, ret)
