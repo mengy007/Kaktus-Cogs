@@ -118,7 +118,7 @@ class CustomCommandsImproved:
                 await self.bot.edit_message(message, ret)
             else:
                 if self.cust_commands[server.id][cmd]["isdm"]:
-                    await self.bot.send_message(author, ret)
+                    await self.bot.send_message(message.author, ret)
                 else:
                     await self.bot.send_message(message.channel, ret)
 
