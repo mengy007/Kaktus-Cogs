@@ -55,7 +55,7 @@ class XPLevels:
             if user.id not in self.leaderboard:
                 self.leaderboard[user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.get_xp(user.id), self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
+            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
         else:
             # Check if user exists in leader board, then check if user is in discord server
             if isusermember(user_id):
@@ -65,7 +65,7 @@ class XPLevels:
                 img = await makeimage(user)
                 with open(img, 'rb') as f:
                     await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
-                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
+                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
             else:
                 tell_nouser()
 
@@ -90,8 +90,8 @@ class XPLevels:
         """Resets rank and EXP!"""
         if self.settings[server.id]["RESETONLEAVE"] == 1:
             user = ctx.message.author
-            if user.id in self.leader_board:
-                del self.leader_board[user.id]
+            if user.id in self.leaderboard:
+                del self.leaderboard[user.id]
                 dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
 
 
@@ -109,13 +109,13 @@ class XPLevels:
                 self.leaderboard[user.id]["rank"] += 1
                 self.leaderboard[user.id]["XP"] = 0
                 msg = '{} **has leveled up and is now level {}!!!\n HURRAY!!**'
-                msg = msg.format(message.author.display_name, self.leader_board[user.id]["rank"])
+                msg = msg.format(message.author.display_name, self.leaderboard[user.id]["rank"])
                 await self.bot.send_message(message.channel, msg)
-                fileIO(path + "/leaderboard.json", "save", self.leader_board)
+                fileIO(path + "/leaderboard.json", "save", self.leaderboard)
         else:
             self.addxp(user)
             self.waitingxp[user.id] = int(time.perf_counter())
-            fileIO(path + "/leaderboard.json", "save", self.leader_board)
+            fileIO(path + "/leaderboard.json", "save", self.leaderboard)
 
     def addxp(self, user):
         if user.id not in self.leaderboard:
