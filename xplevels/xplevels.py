@@ -145,6 +145,8 @@ class XPLevels:
             return False
 
     def tell_nouser(self):
+        #dunno whats going here yet
+        return ""
 
     def makeimage(self, user):
         img = Image.open(rankimage)
