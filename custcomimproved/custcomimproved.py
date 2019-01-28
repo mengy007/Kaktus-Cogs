@@ -111,7 +111,7 @@ class CustomCommandsImproved:
 
         cmd = msg[len(prefix):]
         cmd = cmd.lower()
-		await self.bot.send_message(message.channel, cmd)
+        await self.bot.send_message(message.channel, cmd)
         if cmd in self.cust_commands[server.id]:
             ret = self.cust_commands[server.id][cmd]
             ret = self.format_cc(ret, message)
