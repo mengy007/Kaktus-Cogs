@@ -50,25 +50,26 @@ class XPLevels:
         """Show rank and XP.
 
         Defaults to yours."""
-        server = ctx.message.server
-        if not user:
-            user = ctx.message.author
-            if user.id not in self.leaderboard[server.id]:
-                self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
+        if self.checkenabled(ctx.message.server):
+            server = ctx.message.server
+            if not user:
+                user = ctx.message.author
+                if user.id not in self.leaderboard[server.id]:
+                    self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
-        else:
-            # Check if user exists in leader board, then check if user is in discord server
-            if isusermember(user_id):
-                rank = self.get_rank(user.id)
-                xp = self.get_xp(user.id)
-                channel = ctx.message.channel
-                img = await makeimage(ctx, user)
-                with open(img, 'rb') as f:
-                    await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
-                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
+                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
             else:
-                tell_nouser()
+                # Check if user exists in leader board, then check if user is in discord server
+                if isusermember(user_id):
+                    rank = self.get_rank(user.id)
+                    xp = self.get_xp(user.id)
+                    channel = ctx.message.channel
+                    img = await makeimage(ctx, user)
+                    with open(img, 'rb') as f:
+                        await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
+                    #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
+                else:
+                    tell_nouser()
 
 # ADMIN COMMANDS
 
