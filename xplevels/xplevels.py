@@ -76,7 +76,7 @@ class XPLevels:
     @checks.admin_or_permissions(manage_server=True)
     async def enablelevel(self, ctx):
         """Enable Rank on server"""
-        if ctx.message.server.id not in self.settings
+        if ctx.message.server.id not in self.settings:
             self.settings[ctx.message.server.id] = {}
             self.settings[server.id]["ENABLED"] = True
             self.settings[server.id]["XPCOOL"] = 60
