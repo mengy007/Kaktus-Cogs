@@ -99,12 +99,15 @@ class XPLevels:
             self.resetonleave = self.settings[ctx.message.server.id]["RESETONLEAVE"]
         else:
             self.settings[ctx.message.server.id]["ENABLED"] = True
+        
+        dataIO.save_json(path + "/settings.json", self.settings)
     
     @_xplevelset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def disablelevel(self, ctx):
         if ctx.message.server.id in self.settings:
             self.settings[server.id]["ENABLED"] = False
+        dataIO.save_json(path + "/settings.json", self.settings)
 
 
     @_xplevelset.command(name="set", pass_context=True, no_pm=True)
@@ -136,7 +139,7 @@ class XPLevels:
             if user.id in self.waitingxp:
                 seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
                 if seconds >= self.settings[server.id]["XPCOOL"]:
-                    self.addxp(user)
+                    self.addxp(message, user)
                     self.waitingxp[user.id] = int(time.perf_counter())
                     fileIO(path + "/leaderboard.json", "save", self.leaderboard)
                 if self.leaderboard[server.id][user.id]["XP"] >= self.getxplevel(self.leaderboard[server.id][user.id]["rank"]):
@@ -244,7 +247,11 @@ def check_files():
     if not dataIO.is_valid_json(fp):
         print("Creating roleboard.json...")
         dataIO.save_json(fp, {})
-
+    
+    fp = path + "/settings.json"
+    if not dataIO.is_valid_json(fp):
+        print("Creating settings.json...")
+        dataIO.save_json(fp, {})
 
 def setup(bot):
     check_folders()
