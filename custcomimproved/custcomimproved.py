@@ -155,7 +155,8 @@ class CustomCommandsImproved:
         existing_a = []
         existing_c = []
         count = 0
-
+        if server.id not in self.aliases:
+            self.aliases[server.id] = {}
         for alias in aliases:
             if alias in self.aliases[server.id]:
                 existing_a.append(alias)
