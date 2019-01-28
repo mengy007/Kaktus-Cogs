@@ -46,6 +46,7 @@ class CustomCommandsImproved:
             return
 
         if command not in self.cust_commands[server.id]:
+            self.cust_commands[server.id][command] = {}
             self.cust_commands[server.id][command]["response"] = text
             self.cust_commands[server.id][command]["isdm"] = isdm
             self.save()
