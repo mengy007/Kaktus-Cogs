@@ -20,11 +20,9 @@ class CustomCommandsImproved:
         self.bot = bot
         data = dataIO.load_json(json)
         self.cust_commands = data.get('COMMANDS', {})
-        self.aliases = data.get('ALIASES', {})
 
     def save(self):
         data = {'COMMANDS': self.cust_commands,
-                'ALIASES': self.aliases
                 }
         dataIO.save_json(json, data)
 
@@ -75,11 +73,6 @@ class CustomCommandsImproved:
         server = ctx.message.server
         if command in self.cust_commands[server.id]:
             self.cust_commands[server.id].pop(command)
-
-            for alias, acmd in self.aliases.copy():
-                if acmd == command:
-                    self.aliases.pop(alias)
-
             self.save()
             await self.bot.say("Custom command successfully deleted.")
         else:
@@ -90,18 +83,9 @@ class CustomCommandsImproved:
         """Shows custom commands list"""
         server = ctx.message.server
         if self.cust_commands[server.id]:
-            cmd_aliases[server.id] = {}
-            for k, v in self.aliases[server.id].items():
-                if v not in cmd_aliases[server.id]:
-                    cmd_aliases[server.id][v] = set()
-                cmd_aliases[server.id][v].add(k)
-
             sections = []
             for command, isdm, text in sorted(self.cust_commands[server.id].items()):
                 item = 'Name:    ' + command
-                aliases = cmd_aliases[server.id].get(command)
-                if aliases:
-                    item += '\nAliases: ' + ', '.join(sorted(aliases))
                 item += '\nText:    ' + text
                 item += '\nSend DM: ' + isdm
                 sections.append(item)
@@ -116,88 +100,7 @@ class CustomCommandsImproved:
     @checks.is_owner()
     async def acom(self, ctx, command=None):
         if ctx.invoked_subcommand is None:
-            if command:
-                await ctx.invoke(self.lsaliases, command)
-            else:
-                await ctx.invoke(self.lscom)
-
-    @acom.command(name='show')
-    @checks.is_owner()
-    async def lsaliases(self, ctx, command):
-        "Shows aliases for a command, or the command bound to an alias"
-        server = ctx.message.server
-        base = self.aliases[server.id].get(command)
-        cmd = self.cust_commands[server.id].get(base or command)
-        if base:
-            msg = "`%s` is an alias for `%s`" % (command, base)
-        elif cmd:
-            aliases = [k for k, v in self.aliases.items() if v == command]
-            aliases = ', '.join('`%s`' % x for x in aliases)
-            if aliases:
-                msg = "`%s` has the following aliases: %s." % (command, aliases)
-            else:
-                msg = "`%s` has no aliases."
-        else:
-            msg = "`%s` isn't a custom command or alias." % command
-
-        await self.bot.say(msg)
-
-    @acom.command(name='add')
-    @checks.is_owner()
-    async def addaliases(self, ctx, command, *aliases):
-        "Add one or more aliases for a custom command"
-        command = command.lower()
-        server = ctx.message.server
-        if command not in self.cust_commands[server.id]:
-            await self.bot.say("`%s` isn't a custom command.")
-            return
-
-        existing_a = []
-        existing_c = []
-        count = 0
-        if server.id not in self.aliases:
-            self.aliases[server.id] = {}
-        for alias in aliases:
-            if alias in self.aliases[server.id]:
-                existing_a.append(alias)
-            elif alias in self.bot.commands[server.id]:
-                existing_c.append(alias)
-            else:
-                self.aliases[server.id][alias] = command
-                count += 1
-        self.save()
-
-        msg = "%s new aliases added." % (count if count else 'No')
-        if existing_a:
-            joined = ', '.join('`%s`' % x for x in existing_a)
-            msg += "\nThe following are already aliases: %s." % joined
-        if existing_c:
-            joined = ', '.join('`%s`' % x for x in existing_c)
-            msg += "\nThe following are already normal commands: %s." % joined
-
-        await self.bot.say(msg)
-
-    @acom.command(name='rm')
-    @checks.is_owner()
-    async def rmaliases(self, ctx, *aliases):
-        count = 0
-        skipped = []
-        server = ctx.message.server
-        for alias in aliases:
-            if alias in self.aliases[server.id]:
-                del self.aliases[server.id][alias]
-                count += 1
-            else:
-                skipped.append(alias)
-
-        self.save()
-
-        msg = "%s aliases removed." % (count if count else 'No')
-        if skipped:
-            skipped = ', '.join('`%s`' % x for x in skipped)
-            msg += "\nThe following aliases could not be found: %s." % skipped
-
-        await self.bot.say(msg)
+            await ctx.invoke(self.lscom)
 
     async def on_message(self, message):
         msg = message.content
@@ -208,7 +111,6 @@ class CustomCommandsImproved:
 
         cmd = msg[len(prefix):]
         cmd = cmd.lower()
-        cmd = self.aliases[server.id].get(cmd, cmd)
         if cmd in self.cust_commands[server.id]:
             ret = self.cust_commands[server.id][cmd]
             ret = self.format_cc(ret, message)
@@ -271,8 +173,7 @@ def check_folders():
 def check_files():
     if not dataIO.is_valid_json(json):
         print("Creating empty %s" % json)
-        default = {'ALIASES': {},
-                   'COMMANDS': {},
+        default = {'COMMANDS': {},
                    '_CGCOM_VERSION': 2
                    }
         dataIO.save_json(json, default)
