@@ -57,7 +57,7 @@ class XPLevels:
                 if user.id not in self.leaderboard[server.id]:
                     self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(ctx,user), self.getxp(ctx, user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
+                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(ctx,user), self.getxp(ctx, user), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
             else:
                 # Check if user exists in leader board, then check if user is in discord server
                 if isusermember(user_id):
@@ -106,7 +106,14 @@ class XPLevels:
     @checks.admin_or_permissions(manage_server=True)
     async def disablelevel(self, ctx):
         if ctx.message.server.id in self.settings:
-            self.settings[server.id]["ENABLED"] = False
+            self.settings[ctx.message.server.id]["ENABLED"] = False
+        dataIO.save_json(path + "/settings.json", self.settings)
+    
+    @_xplevelset.command(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)    
+    async def setcooldown(self, ctx, coold: str):
+        if ctx.message.server.id in self.settings:
+            self.settings[ctx.message.server.id]["XPCOOL"] = int(coold)
         dataIO.save_json(path + "/settings.json", self.settings)
 
 
@@ -136,6 +143,8 @@ class XPLevels:
         if self.checkenabled(message.server):
             user = message.author
             server = message.server
+            if user == self.bot.user:
+                return
             if user.id in self.waitingxp:
                 seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
                 if seconds >= self.settings[server.id]["XPCOOL"]:
@@ -191,10 +200,10 @@ class XPLevels:
         else:
             return 0
     
-    def getxp(self, ctx, id):
+    def getxp(self, ctx, user):
         server = ctx.message.server
         if user.id in self.leaderboard[server.id]:
-            return self.leaderboard[server.id][id]["XP"]
+            return self.leaderboard[server.id][user.id]["XP"]
 
     def isusermember(self, ctx, userid: int):
         member = discord.utils.get(ctx.guild.members, id=userid)
