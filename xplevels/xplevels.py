@@ -183,13 +183,13 @@ class XPLevels:
     def getuserrank(self, ctx, user):
         #TODO CHECK IF USER ARE IN DISCORD SERVER
         server = ctx.message.server
-        if user.id in self.leaderboard:
+        if user.id in self.leaderboard[server.id]:
             return self.leaderboard[server.id][user.id]["rank"]
         else:
             return 0
     
     def getxp(self, ctx, id):
-        if self.check_joined(id):
+        if user.id in self.leaderboard[server.id]:
             return self.leaderboard[server.id][id]["XP"]
 
     def isusermember(self, ctx, userid: int):
