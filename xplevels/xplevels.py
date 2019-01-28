@@ -128,7 +128,7 @@ class XPLevels:
 # BOT FUNCTIONS
 
     async def gainxp(self, message):
-        if checkenabled(message.server):
+        if self.checkenabled(message.server):
             user = message.author
             server = message.server
             if user.id in self.waitingxp:
