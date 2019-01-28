@@ -121,16 +121,17 @@ class CustomCommandsImproved:
 
         cmd = msg[len(prefix):]
         cmd = cmd.lower()
-        if cmd in self.cust_commands[server.id]:
-            ret = self.cust_commands[server.id][cmd]["response"]
-            ret = self.format_cc(ret, message)
-            if message.author.id == self.bot.user.id:
-                await self.bot.edit_message(message, ret)
-            else:
-                if self.cust_commands[server.id][cmd]["isdm"] == "1":
-                    await self.bot.send_message(message.author, ret)
+        if server.id in self.cust_commands:
+            if cmd in self.cust_commands[server.id]:
+                ret = self.cust_commands[server.id][cmd]["response"]
+                ret = self.format_cc(ret, message)
+                if message.author.id == self.bot.user.id:
+                    await self.bot.edit_message(message, ret)
                 else:
-                    await self.bot.send_message(message.channel, ret)
+                    if self.cust_commands[server.id][cmd]["isdm"] == "1":
+                        await self.bot.send_message(message.author, ret)
+                    else:
+                        await self.bot.send_message(message.channel, ret)
 
     async def get_prefix(self, msg):
         prefixes = self.bot.command_prefix
