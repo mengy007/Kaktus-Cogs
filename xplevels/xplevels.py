@@ -103,7 +103,7 @@ class XPLevels:
             seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
             if seconds >= self.xpcool:
                 self.addxp(user)
-                self.gettingxp[user.id] = int(time.perf_counter())
+                self.waitingxp[user.id] = int(time.perf_counter())
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
             if self.leaderboard[user.id]["XP"] >= self.getxplevel(self.leaderboard[user.id]["rank"]):
                 self.leaderboard[user.id]["rank"] += 1
@@ -114,7 +114,7 @@ class XPLevels:
                 fileIO(path + "/leaderboard.json", "save", self.leader_board)
         else:
             self.addxp(user)
-            self.gettingxp[user.id] = int(time.perf_counter())
+            self.waitingxp[user.id] = int(time.perf_counter())
             fileIO(path + "/leaderboard.json", "save", self.leader_board)
 
     def addxp(self, user):
