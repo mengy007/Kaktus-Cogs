@@ -96,7 +96,7 @@ class XPLevels:
     @commands.group(name="xplevelset", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def disablelevel(self, ctx):
-        if ctx.message.server.id in self.settings
+        if ctx.message.server.id in self.settings:
             self.settings[server.id]["ENABLED"] = False
 
     @commands.group(name="xplevelset", pass_context=True)
