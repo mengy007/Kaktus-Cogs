@@ -197,7 +197,7 @@ class CustomCommandsImproved:
 
     async def on_message(self, message):
         msg = message.content
-		server = message.server
+        server = message.server
         prefix = await self.get_prefix(message)
         if not self.bot.user_allowed(message) or not prefix:
             return
