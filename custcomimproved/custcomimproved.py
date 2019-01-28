@@ -111,9 +111,8 @@ class CustomCommandsImproved:
 
         cmd = msg[len(prefix):]
         cmd = cmd.lower()
-        await self.bot.send_message(message.channel, cmd)
         if cmd in self.cust_commands[server.id]:
-            ret = self.cust_commands[server.id][cmd]
+            ret = self.cust_commands[server.id][cmd]["response"]
             ret = self.format_cc(ret, message)
             if message.author.id == self.bot.user.id:
                 await self.bot.edit_message(message, ret)
