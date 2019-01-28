@@ -118,7 +118,7 @@ class CustomCommandsImproved:
             else:
                 await ctx.invoke(self.lscom)
 
-    @agcom.command(name='show')
+    @acom.command(name='show')
     @checks.is_owner()
     async def lsaliases(self, ctx, command):
         "Shows aliases for a command, or the command bound to an alias"
@@ -139,7 +139,7 @@ class CustomCommandsImproved:
 
         await self.bot.say(msg)
 
-    @agcom.command(name='add')
+    @acom.command(name='add')
     @checks.is_owner()
     async def addaliases(self, ctx, command, *aliases):
         "Add one or more aliases for a custom command"
@@ -173,7 +173,7 @@ class CustomCommandsImproved:
 
         await self.bot.say(msg)
 
-    @agcom.command(name='rm')
+    @acom.command(name='rm')
     @checks.is_owner()
     async def rmaliases(self, ctx, *aliases):
         count = 0
@@ -255,6 +255,7 @@ class CustomCommandsImproved:
         else:
             return raw_result
         return str(getattr(first, second, raw_result))
+		
 
 
 def check_folders():
