@@ -55,9 +55,7 @@ class XPLevels:
             if user.id not in self.leaderboard:
                 self.leaderboard[user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user),
-                                                                         self.get_xp(user.id),
-                                                                         self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
+            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.get_xp(user.id), self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
         else:
             # Check if user exists in leader board, then check if user is in discord server
             if isusermember(user_id):
@@ -67,9 +65,7 @@ class XPLevels:
                 img = await makeimage(user)
                 with open(img, 'rb') as f:
                     await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
-                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.),
-                                                                         self.get_xp(user.id),
-                                                                         self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
+                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
             else:
                 tell_nouser()
 
