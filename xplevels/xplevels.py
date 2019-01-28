@@ -85,20 +85,20 @@ class XPLevels:
         """Enable Rank on server"""
         if ctx.message.server.id not in self.settings:
             self.settings[ctx.message.server.id] = {}
-            self.settings[server.id]["ENABLED"] = True
-            self.settings[server.id]["XPCOOL"] = 60
-            self.settings[server.id]["LVLUPMSG"] = "GG airshipa, you ranked up!"
-            self.settings[server.id]["BLACKLISTCHANNELS"] = {}
-            self.settings[server.id]["BLACKLISTROLES"] = {}
-            self.settings[server.id]["RESETONLEAVE"] = True
+            self.settings[ctx.message.server.id]["ENABLED"] = True
+            self.settings[ctx.message.server.id]["XPCOOL"] = 60
+            self.settings[ctx.message.server.id]["LVLUPMSG"] = "GG airshipa, you ranked up!"
+            self.settings[ctx.message.server.id]["BLACKLISTCHANNELS"] = {}
+            self.settings[ctx.message.server.id]["BLACKLISTROLES"] = {}
+            self.settings[ctx.message.server.id]["RESETONLEAVE"] = True
             
-            self.xpcool = self.settings[server.id]["XPCOOL"]
-            self.lvlupmsg = self.settings[server.id]["LVLUPMSG"]
-            self.backlistchannel = self.settings[server.id]["BLACKLISTCHANNELS"]
-            self.backlistrole = self.settings[server.id]["BLACKLISTROLES"]
-            self.resetonleave = self.settings[server.id]["RESETONLEAVE"]
+            self.xpcool = self.settings[ctx.message.server.id]["XPCOOL"]
+            self.lvlupmsg = self.settings[ctx.message.server.id]["LVLUPMSG"]
+            self.backlistchannel = self.settings[ctx.message.server.id]["BLACKLISTCHANNELS"]
+            self.backlistrole = self.settings[ctx.message.server.id]["BLACKLISTROLES"]
+            self.resetonleave = self.settings[ctx.message.server.id]["RESETONLEAVE"]
         else:
-            self.settings[server.id]["ENABLED"] = True
+            self.settings[ctx.message.server.id]["ENABLED"] = True
     
     @_xplevelset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
