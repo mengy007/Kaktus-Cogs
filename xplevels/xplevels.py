@@ -73,6 +73,33 @@ class XPLevels:
 # ADMIN COMMANDS
 
     @commands.group(name="xplevelset", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def enablelevel(self, ctx):
+        """Enable Rank on server"""
+        if ctx.message.server.id not in self.settings
+            self.settings[ctx.message.server.id] = {}
+            self.settings[server.id]["ENABLED"] = True
+            self.settings[server.id]["XPCOOL"] = 60
+            self.settings[server.id]["LVLUPMSG"] = "GG airshipa, you ranked up!"
+            self.settings[server.id]["BLACKLISTCHANNELS"] = {}
+            self.settings[server.id]["BLACKLISTROLES"] = {}
+            self.settings[server.id]["RESETONLEAVE"] = True
+            
+            self.xpcool = self.settings[server.id]["XPCOOL"]
+            self.lvlupmsg = self.settings[server.id]["LVLUPMSG"]
+            self.backlistchannel = self.settings[server.id]["BLACKLISTCHANNELS"]
+            self.backlistrole = self.settings[server.id]["BLACKLISTROLES"]
+            self.resetonleave = self.settings[server.id]["RESETONLEAVE"]
+        else:
+            self.settings[server.id]["ENABLED"] = True
+    
+    @commands.group(name="xplevelset", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def disablelevel(self, ctx):
+        if ctx.message.server.id in self.settings
+            self.settings[server.id]["ENABLED"] = False
+
+    @commands.group(name="xplevelset", pass_context=True)
     async def _rank(self, ctx):
         """Rank operations"""
         if ctx.invoked_subcommand is None:
@@ -101,25 +128,35 @@ class XPLevels:
 # BOT FUNCTIONS
 
     async def gainxp(self, message):
-        user = message.author
-        server = message.server
-        if user.id in self.waitingxp:
-            seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
-            if seconds >= self.settings[server.id]["XPCOOL"]:
-                self.addxp(user)
+        if checkenabled(message.server):
+            user = message.author
+            server = message.server
+            if user.id in self.waitingxp:
+                seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
+                if seconds >= self.settings[server.id]["XPCOOL"]:
+                    self.addxp(user)
+                    self.waitingxp[user.id] = int(time.perf_counter())
+                    fileIO(path + "/leaderboard.json", "save", self.leaderboard)
+                if self.leaderboard[server.id][user.id]["XP"] >= self.getxplevel(self.leaderboard[server.id][user.id]["rank"]):
+                    self.leaderboard[server.id][user.id]["rank"] += 1
+                    self.leaderboard[server.id][user.id]["XP"] = 0
+                    msg = '{} **has leveled up and is now level {}!!!\n HURRAY!!**'
+                    msg = msg.format(message.author.display_name, self.leaderboard[server.id][user.id]["rank"])
+                    await self.bot.send_message(message.channel, msg)
+                    fileIO(path + "/leaderboard.json", "save", self.leaderboard)
+            else:
+                self.addxp(message, user)
                 self.waitingxp[user.id] = int(time.perf_counter())
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
-            if self.leaderboard[server.id][user.id]["XP"] >= self.getxplevel(self.leaderboard[server.id][user.id]["rank"]):
-                self.leaderboard[server.id][user.id]["rank"] += 1
-                self.leaderboard[server.id][user.id]["XP"] = 0
-                msg = '{} **has leveled up and is now level {}!!!\n HURRAY!!**'
-                msg = msg.format(message.author.display_name, self.leaderboard[server.id][user.id]["rank"])
-                await self.bot.send_message(message.channel, msg)
-                fileIO(path + "/leaderboard.json", "save", self.leaderboard)
+    
+    def checkenabled(server):
+        if server.id in self.settings:
+            if slef.settings[server.id]["ENABLED"]:
+                return True
+            else:
+                return False
         else:
-            self.addxp(message, user)
-            self.waitingxp[user.id] = int(time.perf_counter())
-            fileIO(path + "/leaderboard.json", "save", self.leaderboard)
+            return False
 
     def addxp(self, message, user):
         server = message.server
