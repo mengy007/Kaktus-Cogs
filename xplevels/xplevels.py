@@ -189,6 +189,7 @@ class XPLevels:
             return 0
     
     def getxp(self, ctx, id):
+        server = ctx.message.server
         if user.id in self.leaderboard[server.id]:
             return self.leaderboard[server.id][id]["XP"]
 
