@@ -150,7 +150,7 @@ class XPLevels:
                 self.waitingxp[user.id] = int(time.perf_counter())
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
     
-    def checkenabled(server):
+    def checkenabled(self, server):
         if server.id in self.settings:
             if slef.settings[server.id]["ENABLED"]:
                 return True
