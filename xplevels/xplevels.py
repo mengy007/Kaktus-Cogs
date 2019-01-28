@@ -28,7 +28,7 @@ class XPLevels:
 
     def __init__(self, bot):
         self.bot = bot
-		
+
         try:
             self.settings = dataIO.load_json(path + "/settings.json")
         except Exception:
@@ -74,8 +74,8 @@ class XPLevels:
                 tell_nouser()
 
 # ADMIN COMMANDS
-		
-    @commands.group(name="xplevelset", pass_context=True)		
+
+    @commands.group(name="xplevelset", pass_context=True)
     async def _rank(self, ctx):
         """Rank operations"""
         if ctx.invoked_subcommand is None:
@@ -88,7 +88,7 @@ class XPLevels:
         self.leaderboard[user.id] = {"username": user.name, "rank": rank, "XP": xp}
         dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
         await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getlevelxp(int(self.leaderboard[user.id]["rank"]))))
-			
+
     @_rank.command(pass_context=True, no_pm=True)
     async def leave(self, ctx, user : discord.Member=None):
         """Resets rank and EXP!"""
@@ -149,25 +149,25 @@ class XPLevels:
             return False
 
     def tell_nouser(self):
-	
+
     def makeimage(self, user):
-    	img = Image.open(rankimage)
+        img = Image.open(rankimage)
         draw = ImageDraw.Draw(img)
         # font = ImageFont.truetype(<font-file>, <font-size>)
-		# draw.text((x, y),"Sample Text",(r,g,b))
-		
-		#TODO Get Profile Pic
-		#TODO Måste tänka över Rank och level, rank i denna koden är egentligen level... :thonk:
-		
+        # draw.text((x, y),"Sample Text",(r,g,b))
+
+        #TODO Get Profile Pic
+        #TODO Måste tänka över Rank och level, rank i denna koden är egentligen level... :thonk:
+
         fontsmall = ImageFont.truetype("sans-serif.ttf", 8)
-		fontbig = ImageFont.truetype("sans-serif.ttf", 16)
-        
-		draw.text((0, 0),"RANK",(255,255,255),font=fontsmall)
-		draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
-		
-		draw.text((0, 0),"LEVEL",(255,255,255),font=fontsmall)
-		draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
-		
+        fontbig = ImageFont.truetype("sans-serif.ttf", 16)
+
+        draw.text((0, 0),"RANK",(255,255,255),font=fontsmall)
+        draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
+
+        draw.text((0, 0),"LEVEL",(255,255,255),font=fontsmall)
+        draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
+
         img.save(path + '/tmp/sample-out.jpg')
         return path + '/tmp/sample-out.jpg'
         #sent = await self.bot.send_file(msg_dest, attachment, filename='captcha.png', content=content, embed=embed)
