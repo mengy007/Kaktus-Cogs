@@ -40,7 +40,7 @@ class CustomCommandsImproved:
         command = command.lower()
         server = ctx.message.server
         if server.id not in self.cust_commands:
-            cust_commands[server.id] = {}
+            self.cust_commands[server.id] = {}
         if command in self.bot.commands:
             await self.bot.say("That command is already a normal command.")
             return
