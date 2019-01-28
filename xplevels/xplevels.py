@@ -119,7 +119,7 @@ class XPLevels:
 
     def addxp(self, user):
         if user.id not in self.leaderboard:
-            addtoleaderboard(user)
+            self.addtoleaderboard(user)
         self.leaderboard[user.id]["XP"] += int(randint(15, 20))
 
     def addtoleaderboard(self, user):
