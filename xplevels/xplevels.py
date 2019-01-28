@@ -1,3 +1,8 @@
+# !
+# !
+# ! NOT YET FINISHED, UNDER DEVELOPMENT
+# !
+# !
 import discord
 from discord.ext import commands
 from .utils import checks
