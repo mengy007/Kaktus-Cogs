@@ -123,6 +123,8 @@ class XPLevels:
 
     def addxp(self, message, user):
         server = message.server
+        if server.id not in self.leaderboard
+            self.leaderboard[server.id] = {}
         if user.id not in self.leaderboard[server.id]:
             self.addtoleaderboard(message, user)
         self.leaderboard[server.id][user.id]["XP"] += int(randint(15, 20))
