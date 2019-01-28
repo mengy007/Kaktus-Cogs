@@ -89,15 +89,19 @@ class CustomCommandsImproved:
             #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
             for command in sorted(self.cust_commands[server.id].keys()):
                 #item = 'Name:    ' + command
-                item = 'Reply:    ' + self.cust_commands[server.id][command]["response"]
-                item += '\nDM:    ' + self.cust_commands[server.id][command]["isdm"]
-                sections.append(item)
+                #item = 'Reply:    ' + self.cust_commands[server.id][command]["response"]
+                #item += '\nDM:    ' + self.cust_commands[server.id][command]["isdm"]
+                #sections.append(item)
+                if self.cust_commands[server.id][command]["isdm"] == "1":
+                    showdmtext = "Yes"
+                else:
+                    showdmtext = "No"
                 
                 embed = discord.Embed(colour=0xFF0000, description='')
                 embed.title = command
                 #embed.set_author(name=str(author.name), icon_url=author.avatar_url)
                 embed.add_field(name='Reply', value=self.cust_commands[server.id][command]["response"])
-                embed.add_field(name='DM', value=self.cust_commands[server.id][command]["isdm"])
+                embed.add_field(name='DM', value=showdmtext)
                 embed.set_footer(text='')
                 await self.bot.say(embed=embed)
 
