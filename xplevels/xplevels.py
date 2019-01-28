@@ -55,7 +55,7 @@ class XPLevels:
             if user.id not in self.leaderboard:
                 self.leaderboard[user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
+            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[user.id]["rank"]))))
         else:
             # Check if user exists in leader board, then check if user is in discord server
             if isusermember(user_id):
@@ -83,7 +83,7 @@ class XPLevels:
         """Set Rank and XP"""
         self.leaderboard[user.id] = {"username": user.name, "rank": rank, "XP": xp}
         dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
-        await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getlevelxp(int(self.leaderboard[user.id]["rank"]))))
+        await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[user.id]["rank"]))))
 
     @_rank.command(pass_context=True, no_pm=True)
     async def leave(self, ctx, user : discord.Member=None):
@@ -101,7 +101,7 @@ class XPLevels:
         user = message.author
         if user.id in self.waitingxp:
             seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
-            if seconds >= self.xpcool:
+            if seconds >= self.settings[server.id]["XPCOOL"]:
                 self.addxp(user)
                 self.waitingxp[user.id] = int(time.perf_counter())
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
