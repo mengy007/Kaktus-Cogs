@@ -85,7 +85,7 @@ class CustomCommandsImproved:
         if self.cust_commands[server.id]:
             sections = []
             #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
-            for command in sorted(self.cust_commands[server.id].items()):
+            for command in sorted(self.cust_commands[server.id].keys()):
                 item = 'Name:    ' + command
                 item += '\nText:    ' + self.cust_commands[server.id][command]["response"]
                 item += '\nSend DM: ' + self.cust_commands[server.id][command]["isdm"]
