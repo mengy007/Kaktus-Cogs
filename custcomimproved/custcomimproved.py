@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from .utils.chat_formatting import pagify, box
 from .utils.dataIO import dataIO
