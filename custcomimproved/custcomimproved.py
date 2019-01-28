@@ -86,14 +86,22 @@ class CustomCommandsImproved:
             sections = []
             #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
             for command in sorted(self.cust_commands[server.id].keys()):
-                item = 'Name:    ' + command
-                item += '\nText:    ' + self.cust_commands[server.id][command]["response"]
-                item += '\nSend DM: ' + self.cust_commands[server.id][command]["isdm"]
+                #item = 'Name:    ' + command
+                item = 'Reply:    ' + self.cust_commands[server.id][command]["response"]
+                item += '\nDM:    ' + self.cust_commands[server.id][command]["isdm"]
                 sections.append(item)
+                
+                embed = discord.Embed(colour=0xFF0000, description='')
+                embed.title = command
+                embed.set_author(name=str(author.name), icon_url=author.avatar_url)
+                embed.add_field(name='Reply', value=self.cust_commands[server.id][command]["response"])
+                embed.add_field(name='DM', value=self.cust_commands[server.id][command]["isdm"])
+                embed.set_footer(text='')
+                await self.bot.say(embed=embed)
 
-            for cmds in pagify('\n\n'.join(sections)):
+            #for cmds in pagify('\n\n'.join(sections)):
                 #await self.bot.say(box(cmds))
-                await self.bot.say(cmds)
+                #await self.bot.say(cmds)
         else:
             await self.bot.say("There are no custom commands defined. "
                                "Use setcom [command] [isdm=1 or 0] [text]")
