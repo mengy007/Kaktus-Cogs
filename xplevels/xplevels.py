@@ -113,7 +113,7 @@ class XPLevels:
                 await self.bot.send_message(message.channel, msg)
                 fileIO(path + "/leaderboard.json", "save", self.leader_board)
         else:
-            self.addxp(user.id)
+            self.addxp(user)
             self.gettingxp[user.id] = int(time.perf_counter())
             fileIO(path + "/leaderboard.json", "save", self.leader_board)
 
