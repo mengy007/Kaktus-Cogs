@@ -50,19 +50,20 @@ class XPLevels:
         """Show rank and XP.
 
         Defaults to yours."""
+        server = ctx.message.server
         if not user:
             user = ctx.message.author
-            if user.id not in self.leaderboard:
-                self.leaderboard[user.id] = {"username": user.name, "rank": 0, "XP": 0}
+            if user.id not in self.leaderboard[server.id]:
+                self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[user.id]["rank"]))))
+            await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
         else:
             # Check if user exists in leader board, then check if user is in discord server
             if isusermember(user_id):
                 rank = self.get_rank(user.id)
                 xp = self.get_xp(user.id)
                 channel = ctx.message.channel
-                img = await makeimage(user)
+                img = await makeimage(ctx, user)
                 with open(img, 'rb') as f:
                     await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
                 #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
@@ -81,17 +82,19 @@ class XPLevels:
     @checks.admin_or_permissions(manage_server=True)
     async def _set(self, ctx, user : discord.Member, rank : int, xp : int):
         """Set Rank and XP"""
-        self.leaderboard[user.id] = {"username": user.name, "rank": rank, "XP": xp}
+        server = ctx.message.server
+        self.leaderboard[server.id][user.id] = {"username": user.name, "rank": rank, "XP": xp}
         dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
-        await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[user.id]["rank"]))))
+        await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
 
     @_rank.command(pass_context=True, no_pm=True)
     async def leave(self, ctx, user : discord.Member=None):
         """Resets rank and EXP!"""
+        server = ctx.message.server
         if self.settings[server.id]["RESETONLEAVE"] == 1:
             user = ctx.message.author
-            if user.id in self.leaderboard:
-                del self.leaderboard[user.id]
+            if user.id in self.leaderboard[server.id]:
+                del self.leaderboard[server.id][user.id]
                 dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
 
 
@@ -106,35 +109,38 @@ class XPLevels:
                 self.addxp(user)
                 self.waitingxp[user.id] = int(time.perf_counter())
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
-            if self.leaderboard[user.id]["XP"] >= self.getxplevel(self.leaderboard[user.id]["rank"]):
-                self.leaderboard[user.id]["rank"] += 1
-                self.leaderboard[user.id]["XP"] = 0
+            if self.leaderboard[server.id][user.id]["XP"] >= self.getxplevel(self.leaderboard[server.id][user.id]["rank"]):
+                self.leaderboard[server.id][user.id]["rank"] += 1
+                self.leaderboard[server.id][user.id]["XP"] = 0
                 msg = '{} **has leveled up and is now level {}!!!\n HURRAY!!**'
-                msg = msg.format(message.author.display_name, self.leaderboard[user.id]["rank"])
+                msg = msg.format(message.author.display_name, self.leaderboard[server.id][user.id]["rank"])
                 await self.bot.send_message(message.channel, msg)
                 fileIO(path + "/leaderboard.json", "save", self.leaderboard)
         else:
-            self.addxp(user)
+            self.addxp(message, user)
             self.waitingxp[user.id] = int(time.perf_counter())
             fileIO(path + "/leaderboard.json", "save", self.leaderboard)
 
-    def addxp(self, user):
-        if user.id not in self.leaderboard:
-            self.addtoleaderboard(user)
-        self.leaderboard[user.id]["XP"] += int(randint(15, 20))
+    def addxp(self, message, user):
+        server = message.server
+        if user.id not in self.leaderboard[server.id]:
+            self.addtoleaderboard(message, user)
+        self.leaderboard[server.id][user.id]["XP"] += int(randint(15, 20))
 
-    def addtoleaderboard(self, user):
-        self.leaderboard[user.id] = {"username": user.name, "rank": 0, "XP": 0}
+    def addtoleaderboard(self, message, user):
+        server = message.server
+        self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
         dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
 
     def getxplevel(self, level):
         xp = 5*(int(level)**2)+50*int(level)+100
         return xp
 
-    def getuserrank(self, user):
+    def getuserrank(self, ctx, user):
         #TODO CHECK IF USER ARE IN DISCORD SERVER
+        server = ctx.message.server
         if user.id in self.leaderboard:
-            return self.leaderboard[user.id]["rank"]
+            return self.leaderboard[server.id][user.id]["rank"]
         else:
             return 0
 
@@ -149,7 +155,7 @@ class XPLevels:
         #dunno whats going here yet
         return ""
 
-    def makeimage(self, user):
+    def makeimage(self, ctx, user):
         img = Image.open(rankimage)
         draw = ImageDraw.Draw(img)
         # font = ImageFont.truetype(<font-file>, <font-size>)
@@ -162,10 +168,10 @@ class XPLevels:
         fontbig = ImageFont.truetype("sans-serif.ttf", 16)
 
         draw.text((0, 0),"RANK",(255,255,255),font=fontsmall)
-        draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
+        draw.text((40, 0),"#" + getuserrank(ctx, user),(255,255,255),font=fontsmall)
 
         draw.text((0, 0),"LEVEL",(255,255,255),font=fontsmall)
-        draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
+        draw.text((40, 0),"#" + getuserrank(ctx, user),(255,255,255),font=fontsmall)
 
         img.save(path + '/tmp/sample-out.jpg')
         return path + '/tmp/sample-out.jpg'
