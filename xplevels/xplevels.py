@@ -99,6 +99,7 @@ class XPLevels:
 
     async def gainxp(self, message):
         user = message.author
+        server = message.server
         if user.id in self.waitingxp:
             seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
             if seconds >= self.settings[server.id]["XPCOOL"]:
