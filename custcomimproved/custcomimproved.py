@@ -62,7 +62,7 @@ class CustomCommandsImproved:
             else:
                 await self.bot.say("OK, leaving that command alone.")
 
-    @commands.command()
+    @commands.command(pass_context=True)
     @checks.is_owner()
     async def rmcom(self, ctx, command: str):
         """Removes a custom command
