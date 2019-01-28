@@ -83,6 +83,7 @@ class CustomCommandsImproved:
     async def lscom(self, ctx):
         """Shows custom commands list"""
         server = ctx.message.server
+        author = ctx.message.author
         if self.cust_commands[server.id]:
             sections = []
             #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
