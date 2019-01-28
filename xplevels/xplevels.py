@@ -57,7 +57,7 @@ class XPLevels:
                 if user.id not in self.leaderboard[server.id]:
                     self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
+                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(ctx,user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
             else:
                 # Check if user exists in leader board, then check if user is in discord server
                 if isusermember(user_id):
