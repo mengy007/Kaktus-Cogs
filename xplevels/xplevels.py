@@ -153,10 +153,13 @@ class XPLevels:
     
     def checkenabled(self, server):
         if server.id in self.settings:
-            if self.settings[server.id]["ENABLED"]:
-                return True
+            if "ENABLED" in self.settings[server.id]:
+                if self.settings[server.id]["ENABLED"]:
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return false
         else:
             return False
 
