@@ -95,7 +95,7 @@ class CustomCommandsImproved:
                 
                 embed = discord.Embed(colour=0xFF0000, description='')
                 embed.title = command
-                embed.set_author(name=str(author.name), icon_url=author.avatar_url)
+                #embed.set_author(name=str(author.name), icon_url=author.avatar_url)
                 embed.add_field(name='Reply', value=self.cust_commands[server.id][command]["response"])
                 embed.add_field(name='DM', value=self.cust_commands[server.id][command]["isdm"])
                 embed.set_footer(text='')
