@@ -8,18 +8,22 @@ from discord.ext import commands
 from .utils import checks
 from .utils.dataIO import dataIO
 from .utils.dataIO import fileIO
+from io import BytesIO
 from __main__ import send_cmd_help
 from random import randint
 import os
 import time
-##from PIL import Image
-##from PIL import ImageFont
-##from PIL import ImageDraw 
+import aiohttp
+try:
+    from PIL import Image, ImageFont, ImageDraw, ImageColor, ImageOps
+    pilAvailable = True
+except ImportError:
+    pilAvailable = False
 
 client = discord.Client()
 path = 'data/kaktuscog/xplevels'
-rankimage = path + '/rankimage.png'
-#https://github.com/ridinginstyle00/ridings-cogs/blob/master/Levels/Levels.py
+rankimage = path + '/card.png'
+fontpath = path + '/BebasNeue.otf'
 
 class XPLevels:
 
@@ -43,6 +47,7 @@ class XPLevels:
         self.roleboard = dataIO.load_json(path + "/roleboard.json")
 
         self.waitingxp = {}
+        self.session = aiohttp.ClientSession()
 
 # USER COMMANDS
     @commands.command(name="rank", pass_context=True)
@@ -57,16 +62,25 @@ class XPLevels:
                 if user.id not in self.leaderboard[server.id]:
                     self.leaderboard[server.id][user.id] = {"username": user.name, "rank": 0, "XP": 0}
 
-                await self.bot.say("{} **LEVEL {} | XP {}/{} **".format(user.name, self.getuserrank(ctx,user), self.getxp(ctx, user), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
+                #await self.bot.say("{} **LEVELL {} | XP {}/{} **".format(user.name, self.getuserrank(ctx,user), self.getxp(ctx, user), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
+                rank = self.getuserrank(ctx, user)
+                xp = self.getxp(ctx, user)
+                channel = ctx.message.channel
+                channel_object = self.bot.get_channel(channel.id)
+                #await self.makeimage(ctx, user)
+                image_obj = await self.makeimage(user, rank, xp)
+                await self.bot.send_file(channel_object, image_obj, filename="rank.png")
             else:
                 # Check if user exists in leader board, then check if user is in discord server
-                if isusermember(user_id):
-                    rank = self.get_rank(user.id)
-                    xp = self.get_xp(user.id)
+                if self.isusermember(ctx, user.id):
+                    rank = self.getuserrank(ctx, user)
+                    xp = self.getxp(ctx, user)
                     channel = ctx.message.channel
-                    img = await makeimage(ctx, user)
-                    with open(img, 'rb') as f:
-                        await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
+                    channel_object = self.bot.get_channel(channel.id)
+                    #await self.makeimage(ctx, user)
+                    image_obj = await self.makeimage(user, rank, xp)
+                    await self.bot.send_file(channel_object, image_obj, filename="rank.png")
+                    #os.remove('data/drawing/temp.png')
                     #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.), self.get_xp(user.id), self.get_level_xp(int(self.leaderboard[user.id]["rank"]))))
                 else:
                     tell_nouser()
@@ -206,7 +220,7 @@ class XPLevels:
             return self.leaderboard[server.id][user.id]["XP"]
 
     def isusermember(self, ctx, userid: int):
-        member = discord.utils.get(ctx.guild.members, id=userid)
+        member = ctx.message.server.get_member(userid)
         if member:
             return True
         else:
@@ -215,28 +229,107 @@ class XPLevels:
     def tell_nouser(self):
         #dunno whats going here yet
         return ""
-
-    def makeimage(self, ctx, user):
+        
+    async def makeimage(self, user, rank, xp):
+        no_profile_picture = Image.open(path + '/noimage.png')
+        bordercolor = [0, 255, 0, 0]
+        
+        profile_area = Image.new("L", (512, 512), 0)
+        
+        draw = ImageDraw.Draw(profile_area)
+        draw.ellipse(((0, 0), (512, 512)), fill=255)
+        circle_img_size = tuple([128, 128])
+        profile_area = profile_area.resize((circle_img_size), Image.ANTIALIAS)
+        
+        try:
+            url = user.avatar_url.replace('webp?size=1024', 'png')
+            url = url.replace('gif?size=1024', 'png')
+            await self._get_profile(url)
+            profile_picture = Image.open(path + '/tmp/profilepic.png')
+        except:
+            profile_picture = no_profile_picture
+            
+        profile_area_output = ImageOps.fit(profile_picture, (circle_img_size), centering=(0, 0))
+        profile_area_output.putalpha(profile_area)    
+        mask = Image.new('L', (512, 512), 0)
+        draw_thumb = ImageDraw.Draw(mask)
+        draw_thumb.ellipse((0, 0) + (512, 512), fill=255, outline=0)
+        circle = Image.new("RGBA", (512, 512))
+        draw_circle = ImageDraw.Draw(circle)
+        draw_circle.ellipse([0, 0, 512, 512], fill=(bordercolor[0], bordercolor[1], bordercolor[2], 180), outline=(255, 255, 255, 250))
+        circle_border_size = await self._circle_border(circle_img_size)
+        circle = circle.resize((circle_border_size), Image.ANTIALIAS)
+        circle_mask = mask.resize((circle_border_size), Image.ANTIALIAS)
+        circle_pos = (67 + int((136 - circle_border_size[0]) / 2))
+        border_pos = (71 + int((136 - circle_border_size[0]) / 2))
+        #drawtwo = ImageDraw.Draw(welcome_picture)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+    
+    
         img = Image.open(rankimage)
         draw = ImageDraw.Draw(img)
-        # font = ImageFont.truetype(<font-file>, <font-size>)
-        # draw.text((x, y),"Sample Text",(r,g,b))
-
-        #TODO Get Profile Pic
-        #TODO Måste tänka över Rank och level, rank i denna koden är egentligen level... :thonk:
-
-        fontsmall = ImageFont.truetype("sans-serif.ttf", 8)
-        fontbig = ImageFont.truetype("sans-serif.ttf", 16)
-
-        draw.text((0, 0),"RANK",(255,255,255),font=fontsmall)
-        draw.text((40, 0),"#" + getuserrank(ctx, user),(255,255,255),font=fontsmall)
-
-        draw.text((0, 0),"LEVEL",(255,255,255),font=fontsmall)
-        draw.text((40, 0),"#" + getuserrank(ctx, user),(255,255,255),font=fontsmall)
-
-        img.save(path + '/tmp/sample-out.jpg')
-        return path + '/tmp/sample-out.jpg'
+        
+        img.paste(circle, (circle_pos, circle_pos), circle_mask)
+        img.paste(profile_area_output, (border_pos, border_pos), profile_area_output)
+        
+        
+        
+        
+        imgpath = path + '/tmp/tmpout.png'
+        fontsmall = ImageFont.truetype(fontpath, 40)
+        fontbig = ImageFont.truetype(fontpath, 90)
+        
+        levelint_size = fontbig.getsize("45")
+        levelint_x = 934-levelint_size[0]-50
+        
+        level_size = fontsmall.getsize("LEVEL")
+        level_size_x = 934-50-levelint_size[0]-20-level_size[0]
+        level_size_y = levelint_size[1] + 50 - level_size[1]
+        
+        
+        
+        
+        #rankint_size = fontbig.getsize("#3545")
+        #rank_size = fontsmall.getsize("RANK")
+        
+        
+        
+        draw.text((levelint_x, 50),"45",(255,255,255),font=fontbig)
+        draw.text((level_size_x, level_size_y),"LEVEL",(255,255,255),font=fontsmall)
+        
+        #draw.text((380, 33),"#214412" + str(rank),(255,255,255),font=fontbig)
+        #draw.text((150, 20),"LEVEL",(255,255,255),font=fontsmall)
+        #draw.text((250, 20), str(xp),(255,255,255),font=fontsmall)
+        image_object = BytesIO()
+        img.save(image_object, format="PNG")
+        image_object.seek(0)
+        return image_object
+        #with open(imgpath, 'rb') as f:
+        #self.bot.send_file(ctx.message.channel, imgpath)
+        #os.remove(imgpath)
         #sent = await self.bot.send_file(msg_dest, attachment, filename='captcha.png', content=content, embed=embed)
+        
+    async def _get_profile(self, url):
+        async with self.session.get(url) as r:
+            image = await r.content.read()
+        with open(path + '/tmp/profilepic.png', 'wb') as f:
+            f.write(image)
+            
+    async def _circle_border(self, circle_img_size: tuple):
+        border_size = []
+        for i in range(len(circle_img_size)):
+            border_size.append(circle_img_size[0] + 8)
+        return tuple(border_size)
 
 def check_folders():
     if not os.path.exists(path):
@@ -263,8 +356,11 @@ def check_files():
         dataIO.save_json(fp, {})
 
 def setup(bot):
-    check_folders()
-    check_files()
-    n = XPLevels(bot)
-    bot.add_listener(n.gainxp, "on_message")
-    bot.add_cog(n)
+    if pilAvailable:
+        check_folders()
+        check_files()
+        n = XPLevels(bot)
+        bot.add_listener(n.gainxp, "on_message")
+        bot.add_cog(n)
+    else:
+        raise RuntimeError("You need to run 'pip3 install Pillow'")
