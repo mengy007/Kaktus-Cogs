@@ -122,7 +122,7 @@ class CustomCommandsImproved:
     @checks.is_owner()
     async def lsaliases(self, ctx, command):
         "Shows aliases for a command, or the command bound to an alias"
-		server = ctx.message.server
+        server = ctx.message.server
         base = self.aliases[server.id].get(command)
         cmd = self.cust_commands[server.id].get(base or command)
         if base:
