@@ -19,6 +19,7 @@ import time
 client = discord.Client()
 path = 'data/kaktuscog/xplevels'
 rankimage = path + '/rankimage.png'
+#https://github.com/ridinginstyle00/ridings-cogs/blob/master/Levels/Levels.py
 
 class XPLevels:
 
@@ -33,11 +34,11 @@ class XPLevels:
         except Exception:
             self.settings =  {}
 
-        self.xpcool = self.settings[server.id]["XPCOOL"]
-        self.lvlupmsg = self.settings[server.id]["LVLUPMSG"]
-        self.backlistchannel = self.settings[server.id]["BLACKLISTCHANNELS"]
-        self.backlistrole = self.settings[server.id]["BLACKLISTROLES"]
-        self.resetonleave = self.settings[server.id]["RESETONLEAVE"]
+        #self.xpcool = self.settings[server.id]["XPCOOL"]
+        #self.lvlupmsg = self.settings[server.id]["LVLUPMSG"]
+        #self.backlistchannel = self.settings[server.id]["BLACKLISTCHANNELS"]
+        #self.backlistrole = self.settings[server.id]["BLACKLISTROLES"]
+        #self.resetonleave = self.settings[server.id]["RESETONLEAVE"]
         self.leaderboard = dataIO.load_json(path + "/leaderboard.json")
         self.roleboard = dataIO.load_json(path + "/roleboard.json")
 
@@ -60,9 +61,13 @@ class XPLevels:
         else:
             # Check if user exists in leader board, then check if user is in discord server
             if isusermember(user_id):
-            rank = self.get_rank(user.id)
-            xp = self.get_xp(user.id)
-            await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.),
+                rank = self.get_rank(user.id)
+                xp = self.get_xp(user.id)
+                channel = ctx.message.channel
+                img = await makeimage(user)
+                with open(img, 'rb') as f:
+                    await self.bot.send_file(channel, f, filename='rank.png', content=content, embed=embed)
+                #await self.bot.say("{}'s stats: **LEVEL {} | XP {}/{} **".format(user.mention, self.getuserrank(user.),
                                                                          self.get_xp(user.id),
                                                                          self.get_level_xp(int(self.leader_board[user.id]["rank"]))))
             else:
@@ -164,4 +169,32 @@ class XPLevels:
 		draw.text((40, 0),"#" + getuserrank(user),(255,255,255),font=fontsmall)
 		
         img.save(path + '/tmp/sample-out.jpg')
-        #sent = await self.cog.send_file(msg_dest, attachment, filename='captcha.png', content=content, embed=embed)
+        return path + '/tmp/sample-out.jpg'
+        #sent = await self.bot.send_file(msg_dest, attachment, filename='captcha.png', content=content, embed=embed)
+
+def check_folders():
+    if not os.path.exists(path):
+        print("Creating " + path + " folder...")
+        os.mkdir(path)
+        print("Creating " + path + "/tmp folder...")
+        os.mkdir(path + '/tmp')
+
+
+def check_files():
+    fp = path + "/leaderboard.json"
+    if not dataIO.is_valid_json(fp):
+        print("Creating leaderboard.json...")
+        dataIO.save_json(fp, {})
+
+    fp = path + "/roleboard.json"
+    if not dataIO.is_valid_json(fp):
+        print("Creating roleboard.json...")
+        dataIO.save_json(fp, {})
+
+
+def setup(bot):
+    check_folders()
+    check_files()
+    n = XPLevels(bot)
+    bot.add_listener(n.gainxp, "on_message")
+    bot.add_cog(n)
