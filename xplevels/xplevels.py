@@ -74,6 +74,12 @@ class XPLevels:
 
     @commands.group(name="xplevelset", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
+    async def _xplevelset(self, ctx):
+        """Rank operations"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+    
+    @_xplevelset.command(pass_context=True, no_pm=True)
     async def enablelevel(self, ctx):
         """Enable Rank on server"""
         if ctx.message.server.id not in self.settings:
@@ -93,19 +99,14 @@ class XPLevels:
         else:
             self.settings[server.id]["ENABLED"] = True
     
-    @commands.group(name="xplevelset", pass_context=True)
+    @_xplevelset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def disablelevel(self, ctx):
         if ctx.message.server.id in self.settings:
             self.settings[server.id]["ENABLED"] = False
 
-    @commands.group(name="xplevelset", pass_context=True)
-    async def _rank(self, ctx):
-        """Rank operations"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
-    @_rank.command(name="set", pass_context=True, no_pm=True)
+    @_xplevelset.command(name="set", pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _set(self, ctx, user : discord.Member, rank : int, xp : int):
         """Set Rank and XP"""
@@ -114,7 +115,7 @@ class XPLevels:
         dataIO.save_json(path + "/leaderboard.json", self.leaderboard)
         await self.bot.say("**{}'s has been set to rank {} with {}/{} xp**".format(user.mention, self.getuserrank(user), self.getxp(user.id), self.getxplevel(int(self.leaderboard[server.id][user.id]["rank"]))))
 
-    @_rank.command(pass_context=True, no_pm=True)
+    @_xplevelset.command(pass_context=True, no_pm=True)
     async def leave(self, ctx, user : discord.Member=None):
         """Resets rank and EXP!"""
         server = ctx.message.server
