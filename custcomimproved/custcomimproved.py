@@ -125,6 +125,17 @@ class CustomCommandsImproved:
             if cmd in self.cust_commands[server.id]:
                 ret = self.cust_commands[server.id][cmd]["response"]
                 ret = self.format_cc(ret, message)
+                results = re.findall(r"{([^}]+)\}", ret)
+                for result in results:
+                    param = self.transform_parameter(result, ctx.message)
+                    ret = ret.replace("{" + result + "}", param)
+                results = re.findall(r"{((\d+)[^.}]*(\.[^:}]+)?[^}]*)\}", ret)
+                if results:
+                    low = min(int(result[1]) for result in results)
+                    for result in results:
+                        index = int(result[1]) - low
+                        arg = self.transform_arg(result[0], result[2], cc_args[index])
+                        ret = ret.replace("{" + result[0] + "}", arg)
                 if message.author.id == self.bot.user.id:
                     await self.bot.edit_message(message, ret)
                 else:
