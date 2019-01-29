@@ -68,7 +68,7 @@ class CustomCommandsImproved:
         """Removes a custom command
 
         Example:
-        !rmgcom yourcommand"""
+        !rmcom yourcommand"""
         command = command.lower()
         server = ctx.message.server
         if command in self.cust_commands[server.id]:
