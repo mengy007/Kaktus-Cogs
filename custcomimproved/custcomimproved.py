@@ -11,7 +11,7 @@ path = 'data/kaktuscog/custcomimproved'
 json = path + '/commands.json'
 
 __author__ = "DasKaktus (DasKaktus#5299)"
-__version__ = "1.0"
+__version__ = "1.5"
 
 
 class CustomCommandsImproved:
@@ -23,8 +23,7 @@ class CustomCommandsImproved:
         self.cust_commands = data.get('COMMANDS', {})
 
     def save(self):
-        data = {'COMMANDS': self.cust_commands,
-                }
+        data = {'COMMANDS': self.cust_commands}
         dataIO.save_json(json, data)
 
     @commands.command(pass_context=True)
@@ -86,12 +85,7 @@ class CustomCommandsImproved:
         author = ctx.message.author
         if self.cust_commands[server.id]:
             sections = []
-            #for command, isdm, text in sorted(self.cust_commands[server.id].items()):
             for command in sorted(self.cust_commands[server.id].keys()):
-                #item = 'Name:    ' + command
-                #item = 'Reply:    ' + self.cust_commands[server.id][command]["response"]
-                #item += '\nDM:    ' + self.cust_commands[server.id][command]["isdm"]
-                #sections.append(item)
                 if self.cust_commands[server.id][command]["isdm"] == "1":
                     showdmtext = "Yes"
                 else:
@@ -99,15 +93,10 @@ class CustomCommandsImproved:
                 
                 embed = discord.Embed(colour=0xFF0000, description='')
                 embed.title = command
-                #embed.set_author(name=str(author.name), icon_url=author.avatar_url)
                 embed.add_field(name='Reply', value=self.cust_commands[server.id][command]["response"])
                 embed.add_field(name='DM', value=showdmtext)
                 embed.set_footer(text='')
                 await self.bot.say(embed=embed)
-
-            #for cmds in pagify('\n\n'.join(sections)):
-                #await self.bot.say(box(cmds))
-                #await self.bot.say(cmds)
         else:
             await self.bot.say("There are no custom commands defined. "
                                "Use setcom [command] [isdm=1 or 0] [text]")
@@ -125,17 +114,6 @@ class CustomCommandsImproved:
             if cmd in self.cust_commands[server.id]:
                 ret = self.cust_commands[server.id][cmd]["response"]
                 ret = self.format_cc(ret, message)
-                results = re.findall(r"{([^}]+)\}", ret)
-                for result in results:
-                    param = self.transform_parameter(result, ctx.message)
-                    ret = ret.replace("{" + result + "}", param)
-                results = re.findall(r"{((\d+)[^.}]*(\.[^:}]+)?[^}]*)\}", ret)
-                if results:
-                    low = min(int(result[1]) for result in results)
-                    for result in results:
-                        index = int(result[1]) - low
-                        arg = self.transform_arg(result[0], result[2], cc_args[index])
-                        ret = ret.replace("{" + result[0] + "}", arg)
                 if message.author.id == self.bot.user.id:
                     await self.bot.edit_message(message, ret)
                 else:
@@ -198,9 +176,7 @@ def check_folders():
 def check_files():
     if not dataIO.is_valid_json(json):
         print("Creating empty %s" % json)
-        default = {'COMMANDS': {},
-                   '_CGCOM_VERSION': 2
-                   }
+        default = {'COMMANDS': {}}
         dataIO.save_json(json, default)
 
 
