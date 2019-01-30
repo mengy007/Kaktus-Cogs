@@ -37,6 +37,7 @@ class Stattracker:
     async def _group(self, ctx):
         """
         settings for stattracker
+	
         """
 
         if ctx.invoked_subcommand is None:
