@@ -1,0 +1,11 @@
+
+{
+    "NAME" : "XPLevel",
+    "AUTHOR" : "Kaktus",
+    "SHORT" : "XP Leveling system, like mee6",
+    "DESCRIPTION" : "Level up and rank users  for their chat activity",
+    "INSTALL_MSG" : "Thanks for installing XPLevel.",
+    "REQUIREMENTS" : [pillow],
+    "TAGS" : ["XPLevel", "xp", "rank"],
+    "DISABLED" : false
+}
