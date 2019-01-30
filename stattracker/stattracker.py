@@ -36,8 +36,7 @@ class Stattracker:
     @checks.admin_or_permissions(manage_messages=True)
     async def _group(self, ctx):
         """
-        settings for stattracker
-	
+        settings for stattracker	
         """
 
         if ctx.invoked_subcommand is None:
@@ -180,7 +179,7 @@ async def fetch_image(self, ctx, duser, urlen, user, platform):
         if response.headers['Content-Type'] == "image/png":
             return await self.bot.send_file(ctx.message.channel, io.BytesIO(await response.read()), filename=user + '.png')
         else:
-            return await self.bot.say("Sorry " + duser.mention + ", could not find the player '" + user + "'")
+            return await self.bot.say("Sorry " + duser.mention + ", could not find the player `"+ user + "`")
 
 def setup(bot):
     pathlib.Path(path).mkdir(exist_ok=True, parents=True)
