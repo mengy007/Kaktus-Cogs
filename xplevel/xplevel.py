@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS leaderboard (
 );
 """
 
+# FOR IMPORT https://mee6.xyz/api/plugins/levels/leaderboard/239788202745921536?limit=999&page=10
+
 class XPLevel:
 
     __author__ = "DasKaktus (DasKaktus#5299)"
@@ -93,6 +95,7 @@ class XPLevel:
             self.settings[server_id]["LVLUPMSG"] = "GG airshipa, you leveled up to level {level}!"
             self.settings[server_id]["BLACKLISTCHANNELS"] = {}
             self.settings[server_id]["BLACKLISTROLES"] = {}
+            self.settings[server_id]["REWARDS"] = {}
             self.settings[server_id]["RESETONLEAVE"] = True
             
         if setting == "enable":
@@ -117,7 +120,7 @@ class XPLevel:
         self.save()
         
     @xplevel.command(pass_context=True, no_pm=True)
-    async def blacklist(self, ctx, setting: str, value: str):
+    async def channelblacklist(self, ctx, setting: str, value: str):
         """
         Add or remove channels where xp cant be gained
         
@@ -127,6 +130,31 @@ class XPLevel:
             list        Shows all blacklisted channels
         """
         test = 1
+    
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def roleblacklist(self, ctx, setting: str, value: str):
+        """
+        Add or remove roles which cannot gain xp
+        
+        Valid settings are:
+            add         Add role to blacklist
+            del         Remove role from blacklist
+            list        Shows all blacklisted roles
+        """
+        test = 1
+        
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def reward(self, ctx, setting: str, role: str, level: str):
+        """
+        Add or remove rewards based on level.
+        eg. [p]xplevel reward add @Shitposter 10
+        
+        Valid settings are:
+            add         Add reward
+            del         Remove reward
+            list        List all rewards
+        """
+        test = 1
         
     
 
@@ -134,17 +162,41 @@ class XPLevel:
     def save(self):
         fileIO(SETTINGFILE, "save", self.settings)
         
+    def givereward(self, server, user, level):
+        # First check if user should have gained a reward
+        # if level == on of the reward goals, give role.
+        member = server.get_member(user.id)
+        if level not in self.settings[server.id]["REWARDS"]:
+            return
+            
+        role = self.settings[server.id]["REWARDS"][level]
+        if role in player.roles:
+            continue
+        try:
+            await self.bot.add_roles(member, *role)
+        except discord.Forbidden:
+            print("Failed to add roles to {} ({})\n{}\n"
+                    "I lack permissions to do that."
+                    "".format(member, member.id, role))
+        except discord.HTTPException as e:
+            print("Failed to add roles to {} ({})\n{}\n"
+                    "{}"
+                    "".format(member, member.id, role, e))
+        
     async def getxp(self, message):
         user = message.author
         server = message.server
         xp = 0
-        if user == self.bot.user:
+        if user == self.bot.user or message.author.bot:
             return
         prefix = await self.get_prefix(message)
         if prefix:
             return
         if self.rankenabled(message.server):
             if message.channel not in self.settings[server.id]["BLACKLISTCHANNELS"]:
+                for role in user.roles:
+                    if role in elf.settings[server.id]["BLACKLISTROLES"]:
+                        return
                 if user.id in self.waitingxp:
                     seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
                     if seconds >= self.settings[server.id]["COOLDOWN"]:
@@ -169,6 +221,7 @@ class XPLevel:
         with self.db as con:
             con.execute(sql, (server.id, user.id))
             curuser = con.execute(sql2, (server.id, user.id)).fetchone()
+        await self.givereward(server, user, curuser["level"])
         return curuser["level"]
                 
     async def get_prefix(self, msg):
@@ -196,7 +249,7 @@ class XPLevel:
         sql6 = "SELECT * FROM leaderboard ORDER BY rank DESC;"
         sql7 = "SELECT * FROM leaderboard WHERE server_id = ? AND user_id != ? ORDER BY rank DESC;"
         
-        xp = int(randint(15, 20))
+        xp = int(randint(15, 25))
         with self.db as con:
             con.execute(sql1, (server.id, user.id))
             curuser = con.execute(sql3, (server.id, user.id)).fetchone()
