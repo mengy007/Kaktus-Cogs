@@ -196,24 +196,33 @@ class XPLevel:
         sql4 = "SELECT * FROM leaderboard where xp < ? AND server_id = ? ORDER BY xp DESC;"
         sql5 = "UPDATE leaderboard SET rank = ? WHERE server_id = ? AND user_id = ?;"
         
+        sql6 = "SELECT count(*) as cc FROM leaderboard where server_id = ?;"
+        
         xp = int(randint(15, 20))
         with self.db as con:
             con.execute(sql, (server.id, user.id))
-            tmpuser = con.execute("SELECT * FROM leaderboard WHERE server_id = ? AND user_id = ?", (server.id, user.id)).fetchone()
-            if tmpuser['rank'] == 0:
+            #tmpuser = con.execute("SELECT * FROM leaderboard WHERE server_id = ? AND user_id = ?", (server.id, user.id)).fetchone()
+            curuser = con.execute(sql3, (server.id, user.id)).fetchone()
+            currank = int(curuser['rank'])
+            curxp = int(curuser['xp']) + xp
+            if currank == 0:
                 #new user set rank to last.. Or?
                 tmpuser2 = con.execute("SELECT * FROM leaderboard ORDER BY rank DESC",()).fetchone()
-                con.execute(sql5,(tmpuser2['rank'] + 1, server.id, user.id))
+                con.execute(sql5,(int(tmpuser2['rank']) + 1, server.id, user.id))
+                currank = int(tmpuser2['rank']) + 1
                 
             con.execute(sql2, (xp, server.id, user.id))
-            curuser = con.execute(sql3, (server.id, user.id)).fetchone()
-            nextuser = con.execute(sql4, (curuser['xp'], server.id)).fetchone()
+            #curuser = con.execute(sql3, (server.id, user.id)).fetchone()
+            nextuser = con.execute(sql4, (curxp, server.id)).fetchone()
+            
             if nextuser is None:
-                con.execute(sql5, (1, server.id, user.id))
+                #con.execute(sql5, (1, server.id, user.id))
+                tmpuser2 = con.execute("SELECT * FROM leaderboard WHERE server_id = ? AND user_id != ? ORDER BY rank DESC",(server.id, user.id)).fetchone()
+                con.execute(sql5,(int(tmpuser2['rank']) + 1, server.id, user.id))
             else:
-                if int(nextuser['rank']) > int(curuser['rank']):
+                if int(nextuser['rank']) < currank :
                     con.execute(sql5, (nextuser['rank'], server.id, user.id))
-                    con.execute(sql5, (curuser['rank'], server.id, nextuser['user_id']))
+                    con.execute(sql5, (currank, server.id, nextuser['user_id']))
             return curuser
         
     def getnextlevelxp(self, level):
