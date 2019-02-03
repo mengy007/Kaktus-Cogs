@@ -75,36 +75,39 @@ class XPLevel:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
             
-    @xplevel.command(pass_context=True)
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def enable(self, ctx):
+        """
+        Enables the use of XPLevel on this server
+        """
+        server_id = ctx.message.server.id
+        self.settings[server_id]["ENABLED"] = True
+        await self.bot.say("XPLevel is now enabled")
+        
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def disable(self, ctx):
+        """
+        Disables the use of XPLevel on this server
+        """
+        server_id = ctx.message.server.id
+        self.settings[server_id]["ENABLED"] = False
+        await self.bot.say("XPLevel is now disabled")
+        
+    @xplevel.command(pass_context=True, no_pm=True)
     async def set(self, ctx, setting: str, *, value: str):
         """
         Modify settings for XPLevel on this server
         
         Valid settings are:
-            enable          Enable this server to get xp
-            disable          Disable this server to get xp
             cooldown        Set the cooldown before new xp can be earned (in seconds)
             levelmsg        Set the level up message use {level} to display level. eg "GG Airship you have now achieved level {level}"
             resetonleave    Either set to true or false to reset users xp when leaving server
         """
         server_id = ctx.message.server.id
-        if ctx.message.server.id not in self.settings:
-            self.settings[server_id] = {}
-            self.settings[server_id]["ENABLED"] = False
-            self.settings[server_id]["XPCOOL"] = 60
-            self.settings[server_id]["LVLUPMSG"] = "GG airshipa, you leveled up to level {level}!"
-            self.settings[server_id]["BLACKLISTCHANNELS"] = {}
-            self.settings[server_id]["BLACKLISTROLES"] = {}
-            self.settings[server_id]["REWARDS"] = {}
-            self.settings[server_id]["RESETONLEAVE"] = True
+        if server_id not in self.settings:
+            self.createsettings(server_id)
             
-        if setting == "enable":
-            self.settings[server_id]["ENABLED"] = True
-            await self.bot.say("XPLevel is now enabled")
-        elif setting == "disable":
-            self.settings[server_id]["ENABLED"] = False
-            await self.bot.say("XPLevel is now disabled")
-        elif setting == "cooldown":
+        if setting == "cooldown":
             try:
                 self.settings[server_id]["XPCOOL"] = int(value)
                 await self.bot.say("The cooldown is now " + value + " seconds")
@@ -116,35 +119,90 @@ class XPLevel:
         elif setting == "resetonleave":
             await self.bot.say("Reset on leave")
         else:
-            await self.bot.say("Sorry ther is no such setting...")
+            await self.bot.say("Sorry there is no such setting...")
         self.save()
         
     @xplevel.command(pass_context=True, no_pm=True)
-    async def channelblacklist(self, ctx, setting: str, value: str):
+    async def blacklistchannel(self, ctx, channel: discord.Channel):
         """
-        Add or remove channels where xp cant be gained
-        
-        Valid settings are:
-            add         Add channel to blacklist
-            del         Remove channel from blacklist
-            list        Shows all blacklisted channels
+        Add a channel where xp cannot be gained
         """
-        test = 1
-    
-    @xplevel.command(pass_context=True, no_pm=True)
-    async def roleblacklist(self, ctx, setting: str, value: str):
-        """
-        Add or remove roles which cannot gain xp
-        
-        Valid settings are:
-            add         Add role to blacklist
-            del         Remove role from blacklist
-            list        Shows all blacklisted roles
-        """
-        test = 1
+        server = ctx.message.server
+        if server.id not in self.settings:
+            self.createsettings(server.id)
+        if channel.id in self.settings[server.id]["BLACKLISTCHANNELS"]:
+            return await self.bot.say('Channel already blacklisted...')
+        self.settings[server.id]["BLACKLISTCHANNELS"].append(channel.id)
+        self.save()
+        return await self.bot.say('Channel ' + channel.mention + ' is now blacklisted')
         
     @xplevel.command(pass_context=True, no_pm=True)
-    async def reward(self, ctx, setting: str, role: str, level: str):
+    async def unblacklistchannel(self, ctx, channel: discord.Channel):
+        """
+        Removes a channel from the blacklist
+        """
+        server = ctx.message.server
+        if server.id not in self.settings:
+            self.createsettings(server.id)
+        if channel.id not in self.settings[server.id]["BLACKLISTCHANNELS"]:
+            return await self.bot.say('Channel is not blacklisted...')
+        self.settings[server.id]["BLACKLISTCHANNELS"].remove(channel.id)
+        self.save()
+        return await self.bot.say('Channel ' + channel.mention + ' is now removed from blacklist')
+
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def viewchannelblacklist(self, ctx):
+        """
+        Lists all blacklisted channels
+        """
+        server = ctx.message.server
+        msg = "Blacklisted channels:\n"
+        for channel_id in self.settings[server.id]["BLACKLISTCHANNELS"]:
+            msg+= "     " + server.get_channel(channel_id) + "\n"
+        return await self.bot.say(msg)   
+
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def blacklistrole(self, ctx, role: discord.Role):
+        """
+        Add a role where xp cannot be gained
+        """
+        server = ctx.message.server
+        if server.id not in self.settings:
+            self.createsettings(server.id)
+        if role.id in self.settings[server.id]["BLACKLISTROLES"]:
+            return await self.bot.say('Role already blacklisted...')
+        self.settings[server.id]["BLACKLISTROLES"].append(role.id)
+        self.save()
+        return await self.bot.say('Role ' + role.mention + ' is now blacklisted')
+        
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def unblacklistrole(self, ctx, role: discord.role):
+        """
+        Removes a role from the blacklist
+        """
+        server = ctx.message.server
+        if server.id not in self.settings:
+            self.createsettings(server.id)
+        if role.id not in self.settings[server.id]["BLACKLISTROLES"]:
+            return await self.bot.say('role is not blacklisted...')
+        self.settings[server.id]["BLACKLISTROLES"].remove(role.id)
+        self.save()
+        return await self.bot.say('role ' + role.mention + ' is now removed from blacklist')
+
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def viewroleblacklist(self, ctx):
+        """
+        Lists all blacklisted roles
+        """
+        server = ctx.message.server
+        msg = "Blacklisted roles:\n"
+        for role_id in self.settings[server.id]["BLACKLISTROLES"]:
+            role_obj = discord.utils.get(server.roles, id=role_id)
+            msg+= "     " + role_obj.mention + "\n"
+        return await self.bot.say(msg) 
+        
+    @xplevel.command(pass_context=True, no_pm=True)
+    async def reward(self, ctx, setting: str, role: str, *, level: str):
         """
         Add or remove rewards based on level.
         eg. [p]xplevel reward add @Shitposter 10
@@ -154,15 +212,37 @@ class XPLevel:
             del         Remove reward
             list        List all rewards
         """
-        test = 1
+        server_id = ctx.message.server.id
+        if server_id not in self.settings:
+            self.createsettings(server_id)
+            
+        if setting == "add":
+            test=1
+        elif setting == "del":
+            test=1
+        elif setting == "list":
+            test=1
+        else:
+            await self.bot.say("Sorry ther is no such setting...")
+        self.save()
         
     
 
 #BOT FUNCTIONS
+    def createsettings(self, server_id):
+        self.settings[server_id] = {}
+        self.settings[server_id]["ENABLED"] = False
+        self.settings[server_id]["XPCOOL"] = 60
+        self.settings[server_id]["LVLUPMSG"] = "GG airshipa, you leveled up to level {level}!"
+        self.settings[server_id]["BLACKLISTCHANNELS"] = []
+        self.settings[server_id]["BLACKLISTROLES"] = []
+        self.settings[server_id]["REWARDS"] = {}
+        self.settings[server_id]["RESETONLEAVE"] = True
+            
     def save(self):
         fileIO(SETTINGFILE, "save", self.settings)
         
-    def givereward(self, server, user, level):
+    async def givereward(self, server, user, level):
         # First check if user should have gained a reward
         # if level == on of the reward goals, give role.
         member = server.get_member(user.id)
@@ -171,9 +251,9 @@ class XPLevel:
             
         role = self.settings[server.id]["REWARDS"][level]
         if role in player.roles:
-            continue
+            return
         try:
-            await self.bot.add_roles(member, *role)
+            await self.bot.add_roles(member, role)
         except discord.Forbidden:
             print("Failed to add roles to {} ({})\n{}\n"
                     "I lack permissions to do that."
@@ -195,7 +275,7 @@ class XPLevel:
         if self.rankenabled(message.server):
             if message.channel not in self.settings[server.id]["BLACKLISTCHANNELS"]:
                 for role in user.roles:
-                    if role in elf.settings[server.id]["BLACKLISTROLES"]:
+                    if role.id in self.settings[server.id]["BLACKLISTROLES"]:
                         return
                 if user.id in self.waitingxp:
                     seconds = abs(self.waitingxp[user.id] - int(time.perf_counter()))
@@ -215,7 +295,7 @@ class XPLevel:
         else:
             return
             
-    def levelup(self, server, user):
+    async def levelup(self, server, user):
         sql = "UPDATE leaderboard SET level=level+1 WHERE server_id=? AND user_id=?;" 
         sql2 = "SELECT * FROM leaderboard WHERE server_id = ? AND user_id = ?;"
         with self.db as con:
@@ -235,6 +315,9 @@ class XPLevel:
             if msg.content.startswith(p):
                 return p
         return None
+    
+    async def klog(self, what: str, *, val: str):
+        print(what + ": {}".format(val))
         
     def formatlevelmsg(self, msg, level):
         msg = msg.replace("{level}", str(level))
@@ -248,7 +331,7 @@ class XPLevel:
         sql5 = "UPDATE leaderboard SET rank = ? WHERE server_id = ? AND user_id = ?;"
         sql6 = "SELECT * FROM leaderboard ORDER BY rank DESC;"
         sql7 = "SELECT * FROM leaderboard WHERE server_id = ? AND user_id != ? ORDER BY rank DESC;"
-        
+            
         xp = int(randint(15, 25))
         with self.db as con:
             con.execute(sql1, (server.id, user.id))
@@ -265,7 +348,11 @@ class XPLevel:
             
             if nextuser is None:
                 tmpuser2 = con.execute(sql7,(server.id, user.id)).fetchone()
-                con.execute(sql5,(int(tmpuser2['rank']) + 1, server.id, user.id))
+                if tmpuser2:
+                    self.klog("rank", tmpuser2['rank'])
+                    con.execute(sql5,(int(tmpuser2['rank']) + 1, server.id, user.id))
+                else:
+                    con.execute(sql5,(1, server.id, user.id))
             else:
                 if int(nextuser['rank']) < currank :
                     con.execute(sql5, (nextuser['rank'], server.id, user.id))
