@@ -11,7 +11,6 @@ from .utils.dataIO import fileIO
 from io import BytesIO
 from __main__ import send_cmd_help
 from random import randint
-from redbot.core.data_manager import bundled_data_path
 import os
 import time
 import aiohttp
@@ -380,7 +379,6 @@ class XPLevel:
 def setup(bot):
     if pilAvailable:
         n = XPLevel(bot)
-        data_manager.load_bundled_data(n, __file__)
         bot.add_listener(n.getxp, "on_message")
         bot.add_cog(n)
     else:
