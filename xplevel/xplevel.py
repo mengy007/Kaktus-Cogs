@@ -1,6 +1,6 @@
 # !
 # !
-# ! NOT YET FINISHED, UNDER DEVELOPMENT
+# ! NOT YET FINISHED, UNDER DEVELOPMENT!
 # !
 # !
 import discord
