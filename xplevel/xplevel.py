@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS leaderboard (
 
 class XPLevel:
 
-    __author__ = "DasKaktus (DasKaktus#5299)"
+    __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "2.0"
     
     def __init__(self, bot):
