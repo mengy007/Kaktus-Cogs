@@ -10,7 +10,7 @@ import re
 path = 'data/kaktuscog/custcomimproved'
 json = path + '/commands.json'
 
-__author__ = "DasKaktus (DasKaktus#5299)"
+__author__ = "OGKaktus (OGKaktus#5299)"
 __version__ = "1.5"
 
 
