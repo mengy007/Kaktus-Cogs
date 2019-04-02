@@ -12,7 +12,7 @@ path = 'data/kaktuscog/stattracker'
 
 class Stattracker:
 
-    __author__ = "DasKaktus (DasKaktus#5299)"
+    __author__ = "DasKaktus (OGKaktus#5299)"
     __version__ = "2.0"
 
     def __init__(self, bot):
