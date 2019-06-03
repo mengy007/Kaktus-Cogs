@@ -13,7 +13,7 @@ class Daddy:
         server = message.server
         content = message.content
         if(content[:3].lower() == "im ") :
-            wait self.bot.say("Hello " + content[3:] + ", I'm " + self.bot.user.name)
+            await self.bot.say("Hello " + content[3:] + ", I'm " + self.bot.user.name)
         elif (content[:4].lower() == "i'm ") :
             await self.bot.say("Hello " + content[4:] + ", I'm " + self.bot.user.name)
 
