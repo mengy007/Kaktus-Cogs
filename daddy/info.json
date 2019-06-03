@@ -1,10 +1,9 @@
 {
-    "NAME" : "Daddy",
-    "AUTHOR" : "Kaktus",
-    "SHORT" : "Dad joke, Hello I'm",
-    "DESCRIPTION" : "Dad joke, Hello I'm",
-    "INSTALL_MSG" : "Thanks for installing daddy.",
-    "REQUIREMENTS" : [],
-    "TAGS" : ["daddy],
-    "DISABLED" : false
+	"author": [
+		"OGKaktus"
+	],
+	"install_msg": "Prepare for the daddy jokes",
+	"name": "Daddy",
+	"short": "Daddy Cog by OGKaktus",
+	"description": "Daddy Joke"
 }
