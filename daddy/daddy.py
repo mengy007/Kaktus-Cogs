@@ -12,11 +12,6 @@ class Daddy(Cog):
     def __init__(self, bot: Red):
         self.bot = red
         
-    @commands.group()
-    async def daddy(self, ctx: commands.Context):
-        """Daddy"""
-        pass
-    
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
         txt = message.clean_content.lower()
