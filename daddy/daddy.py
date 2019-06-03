@@ -17,9 +17,4 @@ class Daddy:
             wait self.bot.say("Hello " + content[3:] + ", I'm " + self.bot.user.name)
         elif (content[:4].lower() == "i'm ") :
             await self.bot.say("Hello " + content[4:] + ", I'm " + self.bot.user.name)
-        
 
-def setup(bot):
-    n = Daddy(bot)
-    bot.add_listener(n.replydad, "on_message")
-    bot.add_cog(n)
