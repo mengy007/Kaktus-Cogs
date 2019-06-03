@@ -11,11 +11,14 @@ class Daddy(commands.Cog):
     def __init__(self, red: Red):
         self.bot = red
     
-    async def replydad(self, message):
-        user = message.author
-        server = message.server
-        content = message.content
-        if(content[:3].lower() == "im ") :
-            await self.bot.say("Hello " + content[3:] + ", I'm " + self.bot.user.name)
-        elif (content[:4].lower() == "i'm ") :
-            await self.bot.say("Hello " + content[4:] + ", I'm " + self.bot.user.name)
+    async def on_message(self, message: discord.Message):
+        guild: discord.Guild = message.guild
+        txt = message.clean_content.lower()
+        splittxt = txt.split()
+        if len(splittxt) == 0:
+            return
+
+        if splittxt[0] == "i'm" and len(splittxt) >= 2:
+            out = txt[4:]
+
+            await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
