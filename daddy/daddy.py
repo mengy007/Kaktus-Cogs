@@ -3,10 +3,13 @@ from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
 
-class Daddy:
+class Daddy(commands.Cog):
 
     __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "1.0"
+    
+    def __init__(self, red: Red):
+        self.bot = red
     
     async def replydad(self, message):
         user = message.author
