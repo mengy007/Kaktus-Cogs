@@ -2,7 +2,7 @@
 import discord
 
 # Red
-from redbot.core import commands
+from redbot.core import commands, checks
 from redbot.core.bot import Red
 
 Cog = getattr(commands, "Cog", object)
