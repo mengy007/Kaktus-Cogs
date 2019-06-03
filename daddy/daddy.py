@@ -14,6 +14,12 @@ class Daddy(Cog):
     
     def __init__(self, , bot: Red):
         self.bot = red
+        
+    @commands.group()
+    @checks.admin()
+    async def daddy(self, ctx: commands.Context):
+        """Dadfy"""
+        pass
     
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
