@@ -2,6 +2,6 @@ from .daddy import Daddy
 
 
 def setup(bot):
-    n = Daddy(bot)
-    bot.add_listener(n.replydad, "on_message")
-    bot.add_cog(n)
+    cog = Daddy(bot)
+    bot.add_listener(cog.replydad, "on_message")
+    bot.add_cog(cog)
