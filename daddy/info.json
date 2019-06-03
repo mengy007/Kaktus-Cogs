@@ -1,9 +1,18 @@
 {
-	"author": [
-		"OGKaktus"
-	],
-	"install_msg": "Prepare for the daddy jokes",
-	"name": "Daddy",
-	"short": "Daddy Cog by OGKaktus",
-	"description": "Daddy Joke"
+    "author": [
+        "OGKaktus"
+    ],
+    "description": "Bla Bla",
+    "disabled": false,
+    "hidden": false,
+    "install_msg": "Daddy.. Installed",
+    "min_python_version": [
+        3,
+        7,
+        0
+    ],
+    "name": "daddy",
+    "requirements": [],
+    "short": "Daddy jokes.",
+    "tags": []
 }
