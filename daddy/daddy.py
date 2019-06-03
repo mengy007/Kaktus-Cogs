@@ -3,6 +3,7 @@ import discord
 
 # Red
 from redbot.core import commands
+from redbot.core.bot import Red
 
 Cog = getattr(commands, "Cog", object)
 
@@ -11,8 +12,8 @@ class Daddy(Cog):
     __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "1.0"
     
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, , bot: Red):
+        self.bot = red
     
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
