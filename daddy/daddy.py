@@ -3,7 +3,6 @@ import discord
 
 # Red
 from redbot.core import commands
-from redbot.core import checks
 from redbot.core.bot import Red
 
 Cog = getattr(commands, "Cog", object)
@@ -14,7 +13,6 @@ class Daddy(Cog):
         self.bot = red
         
     @commands.group()
-    @checks.admin()
     async def daddy(self, ctx: commands.Context):
         """Daddy"""
         pass
