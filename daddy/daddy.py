@@ -1,7 +1,8 @@
+# Discord
 import discord
-from redbot.core import Config, checks
+
+# Red
 from redbot.core import commands
-from redbot.core.bot import Red
 
 Cog: Any = getattr(commands, "Cog", object)
 
