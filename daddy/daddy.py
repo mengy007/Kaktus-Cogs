@@ -14,7 +14,7 @@ class Daddy(Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    async def on_message(self, message: discord.Message):
+    async def replydad(self, message: discord.Message):
         guild: discord.Guild = message.guild
         txt = message.clean_content.lower()
         splittxt = txt.split()
