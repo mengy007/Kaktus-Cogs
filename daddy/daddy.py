@@ -4,7 +4,7 @@ import discord
 # Red
 from redbot.core import commands
 
-Cog: Any = getattr(commands, "Cog", object)
+Cog = getattr(commands, "Cog", object)
 
 class Daddy(Cog):
 
