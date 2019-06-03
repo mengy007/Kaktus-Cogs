@@ -12,7 +12,7 @@ class Daddy(Cog):
     __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "1.0"
     
-    def __init__(self, , bot: Red):
+    def __init__(self, bot: Red):
         self.bot = red
         
     @commands.group()
