@@ -1,4 +1,7 @@
-from redbot.core import commands
+import discord
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
+from redbot.core.commands import Context
 
 class Daddy:
 
