@@ -18,8 +18,8 @@ class Daddy(Cog):
         guild: discord.Guild = message.guild
         txt = message.clean_content.lower()
         splittxt = txt.split()
-        if len(splittxt) == 0:
-            return
+        #if len(splittxt) == 0:
+        #    return
         out = ""
         await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
 
