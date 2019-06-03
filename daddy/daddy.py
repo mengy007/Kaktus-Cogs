@@ -20,10 +20,12 @@ class Daddy(Cog):
         splittxt = txt.split()
         if len(splittxt) == 0:
             return
+        out = ""
+        await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
 
-        if splittxt[0] == "i'm" and len(splittxt) >= 2:
-            out = txt[4:]
-            await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
-        elif splittxt[0] == "im" and len(splittxt) >= 2:
-            out = txt[4:]
-            await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
+        #if splittxt[0] == "i'm" and len(splittxt) >= 2:
+        #    out = txt[4:]
+        #    await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
+        #elif splittxt[0] == "im" and len(splittxt) >= 2:
+        #    out = txt[4:]
+        #    await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
