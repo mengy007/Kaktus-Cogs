@@ -8,10 +8,6 @@ class Daddy:
     
     def __init__(self, bot):
         self.bot = bot
-        try:
-            self.settings = dataIO.load_json(SETTINGFILE)
-        except Exception:
-            self.settings =  {}
             
     async def replydad(self, message):
         user = message.author
