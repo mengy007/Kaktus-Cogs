@@ -1,9 +1,9 @@
 import discord
-from redbot.core import Config, checks, commands
+from redbot.core import Config, checks
+from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.commands import Context
 
-class Daddy(commands.Cog):
+class Daddy(Cog):
 
     __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "1.0"
