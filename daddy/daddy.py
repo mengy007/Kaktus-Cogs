@@ -3,6 +3,8 @@ from redbot.core import Config, checks
 from redbot.core import commands
 from redbot.core.bot import Red
 
+Cog: Any = getattr(commands, "Cog", object)
+
 class Daddy(Cog):
 
     __author__ = "OGKaktus (OGKaktus#5299)"
