@@ -16,7 +16,7 @@ class Daddy(Cog):
     @commands.group()
     @checks.admin()
     async def daddy(self, ctx: commands.Context):
-        """Dadfy"""
+        """Daddy"""
         pass
     
     async def on_message(self, message: discord.Message):
