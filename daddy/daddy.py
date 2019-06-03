@@ -1,10 +1,6 @@
 # Discord
 import discord
 
-# Red
-from redbot.core import commands
-from redbot.core.bot import Red
-
 class Daddy:
 
     async def on_message(self, message: discord.Message):
