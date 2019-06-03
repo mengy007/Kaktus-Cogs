@@ -11,8 +11,8 @@ class Daddy(Cog):
     __author__ = "OGKaktus (OGKaktus#5299)"
     __version__ = "1.0"
     
-    def __init__(self, red: Red):
-        self.bot = red
+    def __init__(self, bot):
+        self.bot = bot
     
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
