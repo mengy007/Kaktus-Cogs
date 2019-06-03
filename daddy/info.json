@@ -1,0 +1,10 @@
+{
+    "NAME" : "Daddy",
+    "AUTHOR" : "Kaktus",
+    "SHORT" : "Dad joke, Hello I'm",
+    "DESCRIPTION" : "Dad joke, Hello I'm",
+    "INSTALL_MSG" : "Thanks for installing daddy.",
+    "REQUIREMENTS" : [],
+    "TAGS" : ["daddy],
+    "DISABLED" : false
+}
