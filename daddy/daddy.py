@@ -5,12 +5,14 @@ import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 
-Cog = getattr(commands, "Cog", object)
-
-class Daddy(Cog):
+class Daddy:
    
     def __init__(self, bot: Red):
         self.bot = red
+
+    @commands.command()
+    async def daddy(self, ctx):
+        pass
         
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
