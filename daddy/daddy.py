@@ -25,5 +25,5 @@ class Daddy(Cog):
             out = txt[4:]
             await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
         elif splittxt[0] == "im" and len(splittxt) >= 2:
-            out = txt[4:]
+            out = txt[3:]
             await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
