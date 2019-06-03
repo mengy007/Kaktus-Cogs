@@ -9,10 +9,7 @@ from redbot.core.bot import Red
 Cog = getattr(commands, "Cog", object)
 
 class Daddy(Cog):
-
-    __author__ = "OGKaktus (OGKaktus#5299)"
-    __version__ = "1.0"
-    
+   
     def __init__(self, bot: Red):
         self.bot = red
         
