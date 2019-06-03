@@ -1,8 +1,19 @@
 # Discord
 import discord
 
-class Daddy:
+# Red
+from redbot.core import commands
 
+Cog = getattr(commands, "Cog", object)
+
+class Daddy(Cog):
+
+    __author__ = "OGKaktus (OGKaktus#5299)"
+    __version__ = "1.0"
+    
+    def __init__(self, bot):
+        self.bot = bot
+    
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
         txt = message.clean_content.lower()
