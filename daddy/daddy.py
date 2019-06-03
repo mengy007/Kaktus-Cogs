@@ -17,10 +17,10 @@ class Daddy(Cog):
     async def on_message(self, message: discord.Message):
         guild: discord.Guild = message.guild
         txt = message.clean_content.lower()
-        splittxt = txt.split()
+        #splittxt = txt.split()
         #if len(splittxt) == 0:
         #    return
-        out = ""
+        out = txt
         await message.channel.send("Hi {}, I'm {}!".format(out, guild.me.display_name))
 
         #if splittxt[0] == "i'm" and len(splittxt) >= 2:
