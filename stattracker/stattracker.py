@@ -116,6 +116,7 @@ class Stattracker:
                 else:
                     url = 'https://www.baver.se/bfv/index.php?pf=' + str(pform) + '&user=' + playername.replace(" ", "%20")
                     await fetch_image(self, ctx, ctx.message.author, url, playername, platform)
+                    await self.bot.say('https://battlefieldtracker.com/bfv/profile/origin/' + playername.replace(" ", "%20") + '/overview')
             else:
                 await self.bot.say(ctx.message.author.mention + ", please specify a valid platform. (PSN, XBOX or PC)")
         except Exception as e:
